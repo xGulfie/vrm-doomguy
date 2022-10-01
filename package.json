@@ -7,7 +7,7 @@
     "@pixiv/three-vrm": "^0.6.11",
     "dat.gui": "^0.7.9",
     "electron": "^20.1.4",
-    "lepikevents": "1.6.0",
+    "@gulfie/lepikevents": "1.6.1",
     "lil-gui": "^0.17.0",
     "meyda": "^5.5.1",
     "three": "^0.137.0",

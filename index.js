@@ -1,6 +1,6 @@
 const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 const path = require('path')
-const lepikEvents = require('lepikevents').events;
+const lepikEvents = require('@gulfie/lepikevents').events;
 const clArgs = require('yargs/yargs')(process.argv.slice(2)).argv
 
 const greenScreen = clArgs.greenscreen || clArgs.greenScreen;
