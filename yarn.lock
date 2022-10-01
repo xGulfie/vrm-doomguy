@@ -44,13 +44,6 @@
     global-agent "^3.0.0"
     global-tunnel-ng "^2.7.1"
 
-"@gulfie/lepikevents@1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@gulfie/lepikevents/-/lepikevents-1.6.1.tgz#ea580b1f165ecb9f773943623745ee62f2be790c"
-  integrity sha512-oLeP/IY6Aj4VOdfb+Un608sWlBglzZZAA0HWUO+H7ybWHiRoCeK8MbENDY5COM7YTe4ZWJi3U0Mje0OMz5Hzyw==
-  dependencies:
-    eventemitter2 "^6.4.5"
-
 "@jridgewell/gen-mapping@^0.3.0":
   version "0.3.2"
   resolved "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.2.tgz"
@@ -1595,6 +1588,13 @@ keyv@^3.0.0:
   integrity sha512-9ykJ/46SN/9KPM/sichzQ7OvXyGDYKGTaDlKMGCAlg2UK8KRy4jb0d8sFc+0Tt0YYnThq8X2RZgCg74RPxgcVA==
   dependencies:
     json-buffer "3.0.0"
+
+lepikevents@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/lepikevents/-/lepikevents-1.6.0.tgz#f90f144fea12c9ec3feb0824bdd4f11db5500998"
+  integrity sha512-ijh6iOqRZiOla6tHMGSpOOe+J8iiUDBrHhiSF5aCRw2zv6Ts9GomAt0yskEGljqb/TgbRNcj0FForWPGH00iFA==
+  dependencies:
+    eventemitter2 "^6.4.5"
 
 lightningcss-darwin-arm64@1.15.0:
   version "1.15.0"

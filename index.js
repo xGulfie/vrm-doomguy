@@ -10,7 +10,7 @@ if (typeof greenScreen === 'string'){
     bgColor = greenScreen;
   } else {
     console.error("it needs to be #aarrggbb format you goober")
-    process.exit(1);
+    app.quit();
   }
 }
 const onTop = clArgs.ontop || clArgs.onTop || clArgs.alwaysontop || clArgs.alwaysOnTop;
