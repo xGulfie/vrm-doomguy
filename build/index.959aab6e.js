@@ -39159,13 +39159,13 @@ exports.default = {
             let armSwing3 = 0;
             let ph = -5;
             if (standWalkRun > 1) {
-                walkPhase += (0, _math2.mix)(d.walkSpeed, guiData.runSpeed, standWalkRun - 1);
+                walkPhase += (0, _math2.mix)(d.walkSpeed, guiData.runSpeed, standWalkRun - 1) * deltaTime * 60;
                 armSwing = (0, _math2.mix)(guiData.walkAmplitude, guiData.runAmplitude, standWalkRun - 1) * Math.sin(walkPhase / 2);
                 armSwing2 = (0, _math2.mix)(guiData.walkAmplitude, guiData.runAmplitude, standWalkRun - 1) * (1 + Math.sin((walkPhase + ph) / 2 + Math.PI));
                 armSwing3 = (0, _math2.mix)(guiData.walkAmplitude, guiData.runAmplitude, standWalkRun - 1) * (1 + Math.sin((walkPhase + ph) / 2));
                 if (!jumping) hips.position.y = (0, _math2.mix)(guiData.walkAmplitude, guiData.runAmplitude, standWalkRun - 1) * Math.sin(walkPhase);
             } else {
-                walkPhase += (0, _math2.mix)(0, guiData.walkSpeed, standWalkRun);
+                walkPhase += (0, _math2.mix)(0, guiData.walkSpeed, standWalkRun) * deltaTime * 60;
                 armSwing = (0, _math2.mix)(0, guiData.walkAmplitude, standWalkRun) * Math.sin(walkPhase / 2);
                 armSwing2 = (0, _math2.mix)(0, guiData.walkAmplitude, standWalkRun) * (1 + Math.sin((walkPhase + ph) / 2 + Math.PI));
                 armSwing3 = (0, _math2.mix)(0, guiData.walkAmplitude, standWalkRun) * (1 + Math.sin((walkPhase + ph) / 2));
@@ -39314,7 +39314,7 @@ exports.default = {
             antialiasing: true
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio * 1.5);
+        renderer.setPixelRatio(window.devicePixelRatio * 2);
         // document.body.appendChild( renderer.domElement );
         scene = new _three.Scene();
         scene.add(light);

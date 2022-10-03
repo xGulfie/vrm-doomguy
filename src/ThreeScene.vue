@@ -183,7 +183,7 @@ export default {
       let armSwing3 = 0;
       let ph = -5;
       if (standWalkRun > 1){ // blend walk and run
-        walkPhase += mix(d.walkSpeed, guiData.runSpeed, standWalkRun-1);
+        walkPhase += mix(d.walkSpeed, guiData.runSpeed, standWalkRun-1)*deltaTime*60;
         armSwing = mix( guiData.walkAmplitude, guiData.runAmplitude, standWalkRun-1)*Math.sin(walkPhase/2);
         armSwing2 = mix( guiData.walkAmplitude, guiData.runAmplitude, standWalkRun-1)*(1+Math.sin((walkPhase+ph)/2+Math.PI));
         armSwing3 = mix( guiData.walkAmplitude, guiData.runAmplitude, standWalkRun-1)*(1+Math.sin((walkPhase+ph)/2));
@@ -192,7 +192,7 @@ export default {
         }
       }
       else{ // blend stand and walk
-        walkPhase += mix(0, guiData.walkSpeed, standWalkRun);
+        walkPhase += mix(0, guiData.walkSpeed, standWalkRun)*deltaTime*60;
         armSwing = mix(0, guiData.walkAmplitude, standWalkRun)*Math.sin(walkPhase/2);
         armSwing2 = mix(0, guiData.walkAmplitude, standWalkRun)*(1+Math.sin((walkPhase+ph)/2+Math.PI));
         armSwing3 = mix(0, guiData.walkAmplitude, standWalkRun)*(1+Math.sin((walkPhase+ph)/2));
@@ -361,9 +361,9 @@ export default {
   mounted(){
     window.addEventListener('resize',this.resize)
     // make scene/renderer/light
-    renderer = new THREE.WebGLRenderer({canvas:this.$refs.canv, alpha:true, antialiasing: true});
+    renderer = new THREE.WebGLRenderer({canvas:this.$refs.canv, alpha:true, antialiasing: false});
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.setPixelRatio( window.devicePixelRatio * 2 );
+    renderer.setPixelRatio( window.devicePixelRatio );
     // document.body.appendChild( renderer.domElement );
     scene = new THREE.Scene();
     

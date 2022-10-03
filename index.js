@@ -18,6 +18,8 @@ const width = Math.round(clArgs.size || clArgs.width || 800);
 const height = Math.round(clArgs.height || width*(3/4));
 
 app.commandLine.appendSwitch('use-fake-ui-for-media-stream')
+// app.commandLine.appendSwitch('force_high_performance_gpu')
+// app.commandLine.appendSwitch('enable-webgl')
 
 let win = null;
 function createWindow () {
