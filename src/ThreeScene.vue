@@ -8,7 +8,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { VRM, VRMSchema } from '@pixiv/three-vrm';
+import { VRMLoaderPlugin, VRMUtils, VRMSchema, VRMHumanBoneName, VRMExpressionPresetName } from '@pixiv/three-vrm';
 require("./audioAnalysis")
 import {getGuiData} from "./gui.js"
 import {mix, expEaseFloat, expEaseVector, mapRangeClamped, jumpCurve, jumpCurve2} from "./math2"
@@ -91,15 +91,15 @@ export default {
       let vrm = scene.userData.vrm;
       
       // move stuffs
-      let hips = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Hips );
-      let neck = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Neck );
-      let shoulderR = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.RightShoulder );
-      let shoulderL = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.LeftShoulder );
-      let armR = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.RightUpperArm );
-      let armL = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.LeftUpperArm );
-      let arm2R = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.RightLowerArm );
-      let arm2L = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.LeftLowerArm );
-      let chest = vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Chest );
+      let hips = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips );
+      let neck = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Neck );
+      let shoulderR = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightShoulder );
+      let shoulderL = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftShoulder );
+      let armR = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightUpperArm );
+      let armL = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftUpperArm );
+      let arm2R = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightLowerArm );
+      let arm2L = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftLowerArm );
+      let chest = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Chest );
       
       // calculate jump data
       let jumping = (time >= jumpStartTime) && (time - jumpStartTime) <= guiData.jumpDuration;
@@ -225,7 +225,7 @@ export default {
       
       // blink
       let b = blink(time)
-      vrm.blendShapeProxy.setValue( VRMSchema.BlendShapePresetName.Blink, b );
+      vrm.expressionManager.setValue( VRMExpressionPresetName.Blink, b );
       
       // normalized window eye look
       let lookX = -1 * (this.appState.mousePosition[0] - this.appState.windowCenter[0]) / window.screen.width;
@@ -263,19 +263,19 @@ export default {
       if (lookLen > 1){lookX/=lookLen;lookY/=lookLen;}
       
       if (lookX < 0){
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookleft, Math.abs(lookX)*0.7);
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookright, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookleft, Math.abs(lookX)*0.7);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookright, 0);
       } else {
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookleft, 0);
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookright, Math.abs(lookX)*0.7);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookleft, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookright, Math.abs(lookX)*0.7);
       }
       
       if (lookY < 0){
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookdown, Math.abs(lookY)*0.8);
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookup, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookdown, Math.abs(lookY)*0.8);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookup, 0);
       } else {
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookdown, 0);
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Lookup, Math.abs(lookY)*0.8);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookdown, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookup, Math.abs(lookY)*0.8);
       }        
       
       // light:
@@ -288,20 +288,27 @@ export default {
       speak = mapRangeClamped(speak,d.speechFloor,d.speechCeiling,0,1);
       mouthOpenBlended = expEaseFloat(mouthOpenBlended, speak, deltaTime, Math.pow(d.speechBlend,10))
       
-      // console.log(window.audioFeatures.vowel)
+      // speak!
       ;(['A','I','U','E','O']).forEach(vowel=>{
         if (d.speechEnabled && vowel == d.mouthShape){
-          vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[vowel], mouthOpenBlended);
+          vrm.expressionManager.setValue(VRMExpressionPresetName[vowel], mouthOpenBlended);
         } else {
-          vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[vowel], 0);
+          vrm.expressionManager.setValue(VRMExpressionPresetName[vowel], 0);
         }
       });
+
+      // reset camera if needed
       if(guiData.cameraNeedsReset){
         guiData.cameraNeedsReset=false;
         controls.reset();
-        vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Head ).getWorldPosition(controls.target);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).getWorldPosition(controls.target);
         controls.target.setY(controls.target.y + 0.1);
         controls.update();
+      }
+      // set material properties
+      // vrm.materials[0].v0CompatShade = true;
+      try{
+        vrm.materials[0].shadeColorFactor.set(guiData.ambientColor);
       }
       
       vrm.update(deltaTime);
@@ -311,38 +318,52 @@ export default {
     loadVrm(val){
       debugger
       const loader = new GLTFLoader();
+      loader.register((parser)=>new VRMLoaderPlugin(parser));
       loader.load(
       // URL of the VRM you want to load
       val,
       // called when the resource is loaded
       ( gltf ) => {
         // generate a VRM instance from gltf
-        VRM.from( gltf ).then( ( vrm ) => {
-          let hadVrm = !!scene.userData.vrm;
-          if (hadVrm){
-            // destroy old one
-            scene.remove(scene.userData.vrm.scene);
-            controls.reset();
-          }
-          scene.userData.vrm = vrm;
-          // add the loaded vrm to the scene
-          scene.add( vrm.scene );
-          // deal with vrm features
-          // console.log( vrm );
-          // console.log( VRM );
-          // set position etc
-          vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Hips ).rotation.y = Math.PI;
-          vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Hips ).position.copy(originalHipPos);
-          vrm.humanoid.getBoneNode( VRMSchema.HumanoidBoneName.Head ).getWorldPosition(controls.target);
-          controls.target.setY(controls.target.y + 0.1)
-          controls.update();
-          vrm.springBoneManager.reset();
-          console.log(vrm.springBoneManager)
-          
-          if (!hadVrm){
-            this.threeUpdate();
-          }
-        } );
+        const vrm = gltf.userData.vrm;
+        let hadVrm = !!scene.userData.vrm;
+        if (hadVrm){
+          // destroy old one
+          VRMUtils.deepDispose(scene.userData.vrm.scene);
+          scene.remove(scene.userData.vrm.scene);
+          controls.reset();
+        }
+        // VRMUtils.rotateVRM0(vrm);
+
+        scene.userData.vrm = vrm;
+        // add the loaded vrm to the scene
+        scene.add( vrm.scene );
+        // deal with vrm features
+        console.log( vrm );
+        // console.log( VRM );
+        // set position etc
+        if (vrm.meta.metaVersion.toString() == "0"){
+          vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).rotation.y = Math.PI;
+        }
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).position.copy(originalHipPos);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).getWorldPosition(controls.target);
+        controls.target.setY(controls.target.y + 0.1)
+        controls.update();
+        vrm.springBoneManager.reset();
+        // console.log(vrm.springBoneManager)
+
+        try{// ya it's hacky I know
+          guiData._ambientColorController._setValueFromHexString(
+            '#'+vrm.materials[0].shadeColorFactor.getHexString()
+          );
+        } catch (er) {
+          console.error(er);
+        }
+        
+        if (!hadVrm){
+          this.threeUpdate();
+        }
+        
       },
       // called while loading is progressing
       ( progress ) => void(0),

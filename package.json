@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@pixiv/three-vrm": "^0.6.11",
+    "@gulfie/lepikevents": "1.6.1",
+    "@pixiv/three-vrm": "1.0.x",
     "dat.gui": "^0.7.9",
     "electron": "^20.1.4",
-    "@gulfie/lepikevents": "1.6.1",
     "lil-gui": "^0.17.0",
     "meyda": "^5.5.1",
     "three": "^0.137.0",

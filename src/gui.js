@@ -10,6 +10,7 @@ export let guiData = {
     jumpAmplitude: 0.15,
     blinkDuration: 0.1,
     lightColor: '#FFFFFF',
+    ambientColor: '#ff0000',
     lightIntensity: 1,
     lightX: 1,
     lightY: 1,
@@ -62,6 +63,7 @@ let getGui = function () {
     let lightingFolder = gui.addFolder("LIGHTING")
     lightingFolder.add(guiData, "lightIntensity", 0, 3)
     lightingFolder.addColor(guiData, "lightColor")
+    guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor")
     lightingFolder.add(guiData, "lightX", -1, 1)
     lightingFolder.add(guiData, "lightY", -1, 1)
     lightingFolder.add(guiData, "lightZ", -1, 1)
