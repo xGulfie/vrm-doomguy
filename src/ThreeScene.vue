@@ -388,9 +388,9 @@ export default {
     renderer = new THREE.WebGLRenderer({
       canvas:this.$refs.canv,
       alpha:true,
-      antialiasing: false,
-      outputEncoding: THREE.sRGBEncoding
+      antialias: true,
     });
+    renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.CineonToneMapping;
     renderer.toneMappingExposure=1;
     renderer.setSize( window.innerWidth, window.innerHeight );

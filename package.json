@@ -18,13 +18,21 @@
     "@parcel/transformer-vue": "^2.7.0",
     "parcel": "^2.7.0",
     "path-browserify": "^1.0.1",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "rimraf": "^3.0.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "yarn parcel -p 2525 src/index.html --dist-dir build --public-url ./",
-    "start": "yarn electron ."
+    "clean":"yarn rimraf build",
+    "build": "yarn parcel build src/index.html --dist-dir build --public-url ./",
+    "start": "yarn electron .",
+    "setup": "yarn && yarn clean && yarn build",
+    "all": "yarn setup && yarn start"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "targets": {
+    "main": false
+  }
 }
