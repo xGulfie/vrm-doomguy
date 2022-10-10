@@ -309,7 +309,10 @@ export default {
       // vrm.materials[0].v0CompatShade = true;
       try{
         vrm.materials[0].shadeColorFactor.set(guiData.ambientColor);
+      } catch(er){
+        console.error(er);
       }
+      renderer.toneMappingExposure = guiData.exposure;
       
       vrm.update(deltaTime);
       
@@ -382,7 +385,14 @@ export default {
   mounted(){
     window.addEventListener('resize',this.resize)
     // make scene/renderer/light
-    renderer = new THREE.WebGLRenderer({canvas:this.$refs.canv, alpha:true, antialiasing: false});
+    renderer = new THREE.WebGLRenderer({
+      canvas:this.$refs.canv,
+      alpha:true,
+      antialiasing: false,
+      outputEncoding: THREE.sRGBEncoding
+    });
+    renderer.toneMapping = THREE.CineonToneMapping;
+    renderer.toneMappingExposure=1;
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setPixelRatio( window.devicePixelRatio );
     // document.body.appendChild( renderer.domElement );

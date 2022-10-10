@@ -27,6 +27,7 @@ export let guiData = {
     speechCeiling:0.25,
     speechBlend:0.8,
     mouthShape:"E",
+    exposure:1,
     revert:function(){
         gui.load(JSON.parse(localStorage.getItem("gui")))
     },
@@ -64,6 +65,7 @@ let getGui = function () {
     lightingFolder.add(guiData, "lightIntensity", 0, 3)
     lightingFolder.addColor(guiData, "lightColor")
     guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor")
+    lightingFolder.add(guiData, "exposure",0,4)
     lightingFolder.add(guiData, "lightX", -1, 1)
     lightingFolder.add(guiData, "lightY", -1, 1)
     lightingFolder.add(guiData, "lightZ", -1, 1)

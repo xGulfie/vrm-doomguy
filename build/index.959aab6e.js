@@ -39263,7 +39263,14 @@ exports.default = {
                 controls.target.setY(controls.target.y + 0.1);
                 controls.update();
             }
-            vrm.materials[0].shadeColorFactor.set(guiData.ambientColor);
+            // set material properties
+            // vrm.materials[0].v0CompatShade = true;
+            try {
+                vrm.materials[0].shadeColorFactor.set(guiData.ambientColor);
+            } catch (er) {
+                console.error(er);
+            }
+            renderer.toneMappingExposure = guiData.exposure;
             vrm.update(deltaTime);
             renderer.render(scene, camera);
         },
@@ -39320,8 +39327,11 @@ exports.default = {
         renderer = new _three.WebGLRenderer({
             canvas: this.$refs.canv,
             alpha: true,
-            antialiasing: false
+            antialiasing: false,
+            outputEncoding: _three.sRGBEncoding
         });
+        renderer.toneMapping = _three.CineonToneMapping;
+        renderer.toneMappingExposure = 1;
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         // document.body.appendChild( renderer.domElement );
@@ -48543,6 +48553,7 @@ let guiData = {
     speechCeiling: 0.25,
     speechBlend: 0.8,
     mouthShape: "E",
+    exposure: 1,
     revert: function() {
         gui.load(JSON.parse(localStorage.getItem("gui")));
     },
@@ -48575,7 +48586,8 @@ let getGui = function() {
     let lightingFolder = gui.addFolder("LIGHTING");
     lightingFolder.add(guiData, "lightIntensity", 0, 3);
     lightingFolder.addColor(guiData, "lightColor");
-    guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor").name("ambient color (may not work)");
+    guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor");
+    lightingFolder.add(guiData, "exposure", 0, 4);
     lightingFolder.add(guiData, "lightX", -1, 1);
     lightingFolder.add(guiData, "lightY", -1, 1);
     lightingFolder.add(guiData, "lightZ", -1, 1);
@@ -50533,7 +50545,7 @@ const _hoisted_1 = {
 const _hoisted_2 = {
     ref: "canv"
 };
-function render(_ctx, _cache) {
+function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("div", _hoisted_1, [
         (0, _vue.createElementVNode)("canvas", _hoisted_2, null, 512 /* NEED_PATCH */ )
     ]);
