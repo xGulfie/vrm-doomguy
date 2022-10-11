@@ -39,7 +39,9 @@ function createWindow () {
 
     frame:!!greenScreen,
     autoHideMenuBar:true,
-    alwaysOnTop:onTop
+    alwaysOnTop:onTop,
+    icon:"icon.png",
+    title:"Gulfievision™"
   })
 
   win.loadFile('build/index.html');
