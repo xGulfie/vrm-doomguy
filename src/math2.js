@@ -54,7 +54,7 @@ export let jumpCurve = function jumpCurve(t, startTime, duration){
     return Math.max(ret,0);
 }
 
-const jumpDip = 0.15;
+const jumpDip = 0.1;
 const jumpMult = 1/((0.5 - jumpDip) * (0.5 - (1-jumpDip)) * (0.5 - 1) * (0.5 - 0))
 export let jumpCurve2 = function(t, startTime, duration){
     if (t < startTime || t > startTime+duration){
