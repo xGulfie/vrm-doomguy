@@ -204,7 +204,7 @@ export default {
         hips.position.y = guiData.jumpAmplitude*jumpCurve2(time, jumpStartTime, guiData.jumpDuration);
       }
       
-      let jumpAmnt = Math.max(0,jumpCurve2(time, jumpStartTime+guiData.jumpDuration*0.25, guiData.jumpDuration));
+      let jumpAmnt = jumpCurve2(time, jumpStartTime+guiData.jumpDuration*0.25, guiData.jumpDuration);
       let jumpModFactor =  1 - 0.1*jumpAmnt;
       // tilt the arms down in a pose
       // todo make them look better when moving

@@ -54,16 +54,17 @@ export let jumpCurve = function jumpCurve(t, startTime, duration){
     return Math.max(ret,0);
 }
 
-const jumpDip = 0.1;
-const jumpMult = 1/((0.5 - jumpDip) * (0.5 - (1-jumpDip)) * (0.5 - 1) * (0.5 - 0))
 export let jumpCurve2 = function(t, startTime, duration){
     if (t < startTime || t > startTime+duration){
         return 0;
     }
     let x = (t-startTime)/duration;
-    return jumpMult * (x - jumpDip) * (x - (1-jumpDip)) * (x - 1) * (x - 0);
+    if (x < 0.8){
+        return -6.2*x*(x-0.8);
+    }else{
+        return 10*(x-1)*(x-0.8);
+    }
 }
-
 // mix between x and y
 export let mix = function mix(x,y,a){
     return x*(1-a)+y*a;
