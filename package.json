@@ -2,6 +2,7 @@
   "name": "fps_vrm_",
   "version": "1.0.0",
   "description": "",
+  "private":true,
   "main": "index.js",
   "dependencies": {
     "lepikevents": "1.6.1",
@@ -30,8 +31,8 @@
     "setup": "yarn && yarn clean && yarn build",
     "all": "yarn setup && yarn start"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "ur mom lol",
+  "license": "SEE LICENSE IN LICENSE",
   "targets": {
     "main": false
   }
