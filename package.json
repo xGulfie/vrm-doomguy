@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@gulfie/lepikevents": "1.6.1",
+    "lepikevents": "1.6.1",
     "@pixiv/three-vrm": "1.0.x",
     "dat.gui": "^0.7.9",
     "electron": "^20.1.4",

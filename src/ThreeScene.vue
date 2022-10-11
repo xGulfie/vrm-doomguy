@@ -263,20 +263,20 @@ export default {
       if (lookLen > 1){lookX/=lookLen;lookY/=lookLen;}
       
       if (lookX < 0){
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookleft, Math.abs(lookX)*0.7);
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookright, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookLeft, Math.abs(lookX)*0.7);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookRight, 0);
       } else {
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookleft, 0);
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookright, Math.abs(lookX)*0.7);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookLeft, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookRight, Math.abs(lookX)*0.7);
       }
       
       if (lookY < 0){
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookdown, Math.abs(lookY)*0.8);
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookup, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookDown, Math.abs(lookY)*0.8);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookUp, 0);
       } else {
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookdown, 0);
-        vrm.expressionManager.setValue(VRMExpressionPresetName.Lookup, Math.abs(lookY)*0.8);
-      }        
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookDown, 0);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookUp, Math.abs(lookY)*0.8);
+      }
       
       // light:
       light.color.set(d.lightColor);
@@ -284,16 +284,16 @@ export default {
       light.position.set(d.lightX,d.lightY,d.lightZ).normalize();//normalize may not be necessary
       
       // mouth shape
-      let speak = window?.audioFeatures?.speak || 0;
+      let speak = window.audioFeatures?.speak || 0;
       speak = mapRangeClamped(speak,d.speechFloor,d.speechCeiling,0,1);
       mouthOpenBlended = expEaseFloat(mouthOpenBlended, speak, deltaTime, Math.pow(d.speechBlend,10))
       
       // speak!
-      ;(['A','I','U','E','O']).forEach(vowel=>{
+      ;(['aa','ih','ou','ee','oh']).forEach(vowel=>{
         if (d.speechEnabled && vowel == d.mouthShape){
-          vrm.expressionManager.setValue(VRMExpressionPresetName[vowel], mouthOpenBlended);
+          vrm.expressionManager.setValue(vowel, mouthOpenBlended);
         } else {
-          vrm.expressionManager.setValue(VRMExpressionPresetName[vowel], 0);
+          vrm.expressionManager.setValue(vowel, 0);
         }
       });
 
@@ -338,6 +338,13 @@ export default {
         }
         // VRMUtils.rotateVRM0(vrm);
 
+        // delete blend shape normals because they cause more pain than they are worth lmao
+        vrm.scene.traverse(o=>{
+          if (o.type=="SkinnedMesh" && o.geometry?.morphAttributes?.normal){
+            delete o.geometry.morphAttributes.normal;
+          }
+        });
+
         scene.userData.vrm = vrm;
         // add the loaded vrm to the scene
         scene.add( vrm.scene );
@@ -353,8 +360,8 @@ export default {
         controls.target.setY(controls.target.y + 0.1)
         controls.update();
         vrm.springBoneManager.reset();
-        // console.log(vrm.springBoneManager)
 
+        // get material ambient color
         try{// ya it's hacky I know
           guiData._ambientColorController._setValueFromHexString(
             '#'+vrm.materials[0].shadeColorFactor.getHexString()
@@ -391,7 +398,7 @@ export default {
       antialias: true,
     });
     renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.toneMapping = THREE.CineonToneMapping;
+    renderer.toneMapping = THREE.LinearToneMapping;
     renderer.toneMappingExposure=1;
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setPixelRatio( window.devicePixelRatio );

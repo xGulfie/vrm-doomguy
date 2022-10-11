@@ -26,7 +26,7 @@ export let guiData = {
     speechFloor: 0.1,
     speechCeiling:0.25,
     speechBlend:0.8,
-    mouthShape:"E",
+    mouthShape:"ee",
     exposure:1,
     revert:function(){
         gui.load(JSON.parse(localStorage.getItem("gui")))
@@ -76,8 +76,8 @@ let getGui = function () {
     speechFolder.add(guiData,"speechEnabled")
     speechFolder.add(guiData, "speechFloor", 0, 0.5)
     speechFolder.add(guiData, "speechCeiling", 0, 0.5);
-    speechFolder.add(guiData, "speechBlend", 0.5, .9999)
-    speechFolder.add(guiData, "mouthShape", ["A","I","U","E","O"])
+    speechFolder.add(guiData, "speechBlend", 0.25, .9999)
+    speechFolder.add(guiData, "mouthShape", ["aa","ih","ou","ee","oh"])
     gui.add(guiData,"revert")
     gui.add(guiData,"save")
     gui.add(guiData,"reset").name("Reset ALL to DEFAULT")
