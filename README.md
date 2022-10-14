@@ -8,4 +8,6 @@ WASD is move, shift is run, space is jump
 
 run `yarn setup` then `yarn start [--width nnn] [--height nnn] [--greenscreen[=#aarrggbb]] [--always-on-top]`
 
+or just download the release and click "RUNME.vbs" lol
+
 it is transparent and there's no title bar so if you wanna move it you will have to hit alt+space then hit M, then use arrow keys to move it around. Or use greenscreen mode and have OBS chroma-key it
