@@ -1,6 +1,7 @@
-const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
+const { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, dialog } = require('electron');
+const { platform } = require('os');
 const path = require('path')
-const lepikEvents = require('@gulfie/lepikevents').events;
+const lepikEvents = require('lepikevents').events;
 const clArgs = require('yargs/yargs')(process.argv.slice(2)).argv
 
 const greenScreen = clArgs.greenscreen || clArgs.greenScreen;
@@ -83,6 +84,26 @@ app.whenReady().then(() => {
   // globalShortcut.register('CommandOrControl+W', () => {
   //   console.log('Electron loves global shortcuts!')
   // })
+  ipcMain.handle("requestGltf",async function(){
+    const result = await dialog.showOpenDialog()
+      // properties:["openFile"],
+      // title:"pick a file!",
+      // filters:[{name:"model files (.gltf,.glb)",extensions:["gltf","glb"]}]
+
+    if (result.canceled || typeof result.filePaths == 'undefined'){
+      return null
+    } else {
+      let ret ='file://'+(result.filePaths[0].split(/\\|\//g).map(encodeURIComponent).join('/'));
+
+      if (platform == 'win32'){
+        ret = ret.replace('%3A',':')
+      }
+      return ret
+    }
+
+  });
+
+
 }).then(createWindow);
 
 app.on('window-all-closed', () => {
@@ -115,3 +136,4 @@ function filterKeys(s){
   });
   return match;
 }
+

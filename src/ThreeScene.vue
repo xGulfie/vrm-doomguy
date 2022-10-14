@@ -12,6 +12,7 @@ import { VRMLoaderPlugin, VRMUtils, VRMSchema, VRMHumanBoneName, VRMExpressionPr
 require("./audioAnalysis")
 import {getGuiData} from "./gui.js"
 import {mix, expEaseFloat, expEaseVector, mapRangeClamped, jumpCurve, jumpCurve2} from "./math2"
+import { access } from 'fs';
 
 const guiData = getGuiData();
 
@@ -55,15 +56,15 @@ function blink(tSec){
   return 0;
 }
 
-
+let accessoryMeshes = {};// accessory mesh by url
+let headFollower = new THREE.Object3D();
+let worldFollower = new THREE.Object3D();
 
 // vue app
 export default {
-  props:["vrmUrl","appState"],
+  props:["vrmUrl","appState","accessories"],
   data:function(){
-    return {
-      controls:null
-    };
+    return {};
   },
   methods:{     
     resize(){
@@ -355,8 +356,9 @@ export default {
         if (vrm.meta.metaVersion.toString() == "0"){
           vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).rotation.y = Math.PI;
         }
-        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).position.copy(originalHipPos);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).position?.copy(originalHipPos);
         vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).getWorldPosition(controls.target);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).add(headFollower);
         controls.target.setY(controls.target.y + 0.1)
         controls.update();
         vrm.springBoneManager.reset();
@@ -387,6 +389,32 @@ export default {
       if (newVal != oldVal && newVal){
         this.loadVrm(newVal)
       }
+    },
+    accessories:{
+      handler:function(accessories){
+        // check my scene and move shit around and also spawn it
+        console.log('scene got new accessories',accessories)
+
+        accessories.forEach(a=>{
+          if (a.url && typeof accessoryMeshes[a.url] == 'undefined'){
+            accessoryMeshes[a.url] = new THREE.Object3D();// pending parent object
+            loadGltf(a.url, accessoryMeshes[a.url]);
+          }
+          // update transforms
+          let parentMesh = accessoryMeshes[a.url];
+          parentMesh.position.set(a.position.x, a.position.y, a.position.z);
+          parentMesh.rotation.set(a.rotation.x, a.rotation.y, a.rotation.z);
+          parentMesh.scale.set(a.scale.x, a.scale.y, a.scale.z);
+          if (a.attachment === "head"){
+            headFollower.add(parentMesh);
+          }
+          else {
+            worldFollower.add(parentMesh);
+          }
+        });
+
+      },
+      deep:true      
     }
   },
   mounted(){
@@ -404,6 +432,8 @@ export default {
     renderer.setPixelRatio( window.devicePixelRatio );
     // document.body.appendChild( renderer.domElement );
     scene = new THREE.Scene();
+    scene.add(worldFollower);
+    scene.add(headFollower);
     
     scene.add( light );
     
@@ -428,4 +458,21 @@ export default {
   },
   
 }
+
+function loadGltf(url,intoObject){
+    return new Promise((resolve,reject)=>{
+        new GLTFLoader().load(url,(gltf)=>{
+            intoObject.add(gltf.scene);
+        },
+        (progress)=>{},
+        (error)=>{
+            reject(error);
+        })
+    });
+}
+
+async function cacheAccessory(url){
+  awa
+}
+
 </script>

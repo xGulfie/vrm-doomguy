@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 let opts = {};
+
+// these events will be sent to the browser window
 const events = [
     'keyPress',
     'keyRelease',
@@ -15,5 +17,7 @@ events.forEach((eventName)=>{
         ipcRenderer.on(eventName, (evt,data)=>callback(data));
     }
 });
+
+opts['showGltfDialog'] = ()=> ipcRenderer.invoke("requestGltf")
 
 contextBridge.exposeInMainWorld('electronAPI', opts);

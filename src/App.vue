@@ -2,13 +2,16 @@
 <div class="fullsize">
   <input style="display:none" type="file"/>
   <div class="fullsize" @dragover.prevent @dragenter.prevent @drop.prevent="dragFile">
-    <three-scene :vrmUrl="vrmUrl" :appState="appState"></three-scene>
+    <three-scene :vrmUrl="vrmUrl" :appState="appState" :accessories="accessories"></three-scene>
+    <div>OK</div>
+    <props-menu @accessoriesChanged="handleAccessories"></props-menu>
   </div>
 </div>
 </template>
 
 <script>  
 
+import { VueElement } from "vue";
 import {toast} from "./toast"
   export default {
     data() {
@@ -19,10 +22,11 @@ import {toast} from "./toast"
           space:false,
           windowCenter:[0,0],
           mousePosition:[0,0,0],
-          fpsLookCenter:[0,0]
+          fpsLookCenter:[0,0],
         },
         vrm:null,
-        vrmUrl:require('./example.vrm')
+        vrmUrl:require('./example.vrm'),
+        accessories:[]
       };
     },
     methods:{
@@ -81,6 +85,11 @@ import {toast} from "./toast"
             this.appState.fpsLookCenter[1]=this.appState.mousePosition[1];
           }
         }
+      },
+      handleAccessories(newAccessories){
+        console.log("accessories changed");
+        console.log(newAccessories);
+        this.accessories=newAccessories;
       }
     },
     created:function(){
