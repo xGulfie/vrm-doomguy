@@ -2,34 +2,35 @@
   "name": "fps_vrm_",
   "version": "1.0.0",
   "description": "",
-  "private":true,
+  "private": true,
   "main": "index.js",
   "dependencies": {
-    "lepikevents": "1.6.1",
-    "@pixiv/three-vrm": "1.0.x",
-    "dat.gui": "^0.7.9",
     "electron": "^20.1.4",
-    "lil-gui": "^0.17.0",
-    "meyda": "^5.5.1",
-    "three": "^0.137.0",
-    "vue": "^3.2.39",
+    "lepikevents": "^1.6.5",
     "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@parcel/transformer-vue": "^2.7.0",
+    "@pixiv/three-vrm": "1.0.x",
+    "lil-gui": "^0.17.0",
+    "meyda": "^5.5.1",
     "parcel": "^2.7.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "three": "^0.137.0",
+    "vue": "^3.2.39",
+    "yarn": "^1.22.19"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "yarn parcel -p 2525 src/index.html --dist-dir build --public-url ./",
-    "clean":"yarn rimraf build",
+    "clean": "yarn rimraf build",
     "build": "yarn parcel build src/index.html --dist-dir build --public-url ./",
     "start": "yarn electron .",
     "setup": "yarn && yarn clean && yarn build",
-    "all": "yarn setup && yarn start"
+    "all": "yarn setup && yarn start",
+    "release-win": "yarn setup && yarn rimraf ./node_modules && yarn --prod && tar -czf win.tar.gz package.json preload.js README.md RUNME.vbs LICENSE index.js icon.png build/ node_modules/"
   },
   "author": "ur mom lol",
   "license": "SEE LICENSE IN LICENSE",

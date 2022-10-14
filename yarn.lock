@@ -1248,11 +1248,6 @@ csstype@^2.6.8:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.21.tgz#2efb85b7cc55c80017c66a5ad7cbd931fda3a90e"
   integrity sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==
 
-dat.gui@^0.7.9:
-  version "0.7.9"
-  resolved "https://registry.yarnpkg.com/dat.gui/-/dat.gui-0.7.9.tgz#860cab06053b028e327820eabdf25a13cf07b17e"
-  integrity sha512-sCNc1OHobc+Erc1HqiswYgHdVNpSJUlk/Hz8vzOCsER7rl+oF/4+v8GXFUyCgtXpoCX6+bnmg07DedLvBLwYKQ==
-
 dct@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/dct/-/dct-0.1.0.tgz#301c5410b76bbfa32eea16f4a3a803d0f76130f8"
@@ -1715,10 +1710,10 @@ keyv@^3.0.0:
   dependencies:
     json-buffer "3.0.0"
 
-lepikevents@1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/lepikevents/-/lepikevents-1.6.1.tgz#5dd8927198221e4364a816f5de905e0b3326be77"
-  integrity sha512-R/rMPUif+zgsA76h+ikt/+BJ/72LcZpSZGtzxwVHOAT7eclKs6OEQJojzh/zaVEjmksaKtEoCoyRXinXPzeCZQ==
+lepikevents@^1.6.5:
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/lepikevents/-/lepikevents-1.6.5.tgz#370c32a999d785853a2c62be8147702b8e5ac558"
+  integrity sha512-/0JGyo6tsWUlL5XbaJUJ2YCW5JHYfCkwlAFF+1KHssf7I/UyexR4marKSW2kun7RYK6B7niM42ogynZ2dK7mbA==
   dependencies:
     eventemitter2 "^6.4.5"
 
@@ -2468,6 +2463,11 @@ yargs@^17.5.1:
     string-width "^4.2.3"
     y18n "^5.0.5"
     yargs-parser "^21.0.0"
+
+yarn@^1.22.19:
+  version "1.22.19"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.19.tgz#4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+  integrity sha512-/0V5q0WbslqnwP91tirOvldvYISzaqhClxzyUKXYxs07yUILIs5jx/k6CFe8bvKSkds5w+eiOqta39Wk3WxdcQ==
 
 yauzl@^2.10.0:
   version "2.10.0"
