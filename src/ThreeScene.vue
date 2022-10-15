@@ -120,7 +120,6 @@ export default {
       let wasGrounded = grounded;
       grounded = time >= jumpStartTime+guiData.jumpDuration;
       if (!wasGrounded && grounded){
-        console.log('landed');
         // round walkPhase up to the nearest pi
         // walkPhase = walkPhase - (walkPhase % (Math.PI)) + Math.PI;
       }
@@ -320,9 +319,13 @@ export default {
       vrm.update(deltaTime);
 
       if (hdriTexture){
-        scene.environment=hdriTexture;
+        if(guiData.useEnvmap){
+          scene.environment=hdriTexture;
+        } else {
+          scene.environment=null;
+        }
       }
-      
+      debugger
       renderer.render( scene, camera );
     },
     loadVrm(val){
@@ -399,7 +402,6 @@ export default {
     accessories:{
       handler:function(accessories){
         // check my scene and move shit around and also spawn it
-        console.log('scene got new accessories',accessories)
 
         accessories.forEach(a=>{
           if (a.url && typeof accessoryMeshes[a.url] == 'undefined'){

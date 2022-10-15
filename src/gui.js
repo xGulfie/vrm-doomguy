@@ -11,6 +11,7 @@ export let guiData = {
     blinkDuration: 0.1,
     lightColor: '#FFFFFF',
     ambientColor: '#ff0000',
+    useEnvmap: true,
     lightIntensity: 1,
     lightX: 1,
     lightY: 1,
@@ -69,6 +70,7 @@ let getGui = function () {
     lightingFolder.add(guiData, "lightX", -1, 1)
     lightingFolder.add(guiData, "lightY", -1, 1)
     lightingFolder.add(guiData, "lightZ", -1, 1)
+    lightingFolder.add(guiData, "useEnvmap")
     gui.add(guiData, "shoulderRotation", -0.2, 0.2)
     gui.add(guiData, "upperArmRotation", 0, 1.4)
     gui.add(guiData, "lowerArmRotation", 0, 0.5)
