@@ -3,7 +3,7 @@
         <input type="button" @click="addGltf" value="Add Prop">
         <div v-for="prop,idx in objects " :key="prop.url">
             <input type="button" value="Remove" @click="objects.splice(idx,1)"/>
-            <input type="text" readonly style="width:12em" :value="prop.url">
+            <input type="text" readonly style="width:12em" :value="prop.url | basename">
             <br>
             <label>enabled
                 <input type="checkbox" v-model="prop.enabled" @input="dataChanged"/>
@@ -95,6 +95,11 @@ export default {
     },
     destroyed(){
         window.removeEventListener('keyup',this.keyUp)
+    },
+    filters:{
+        basename(s){
+            return s.split('/').pop();
+        }
     }
     
     

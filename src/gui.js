@@ -101,7 +101,10 @@ let getGui = function () {
 
     helpEl.innerHTML = `
     <p>
-    press H to show or hide the options menu
+    press H to show or (H)ide the main options menu
+    </p>
+    <p>
+    press P for the (P)rops menu
     </p>
     <br>
     <p>
