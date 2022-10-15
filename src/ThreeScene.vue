@@ -7,6 +7,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { VRMLoaderPlugin, VRMUtils, VRMSchema, VRMHumanBoneName, VRMExpressionPresetName } from '@pixiv/three-vrm';
 require("./audioAnalysis")
@@ -21,6 +22,7 @@ let camera = null;
 let renderer = null;
 let scene = null;
 let controls = null;
+let hdriTexture = null;
 let originalHipPos=new THREE.Vector3();
 
 let walkPhase = 0.0;
@@ -316,6 +318,10 @@ export default {
       renderer.toneMappingExposure = guiData.exposure;
       
       vrm.update(deltaTime);
+
+      if (hdriTexture){
+        scene.environment=hdriTexture;
+      }
       
       renderer.render( scene, camera );
     },
@@ -398,7 +404,8 @@ export default {
         accessories.forEach(a=>{
           if (a.url && typeof accessoryMeshes[a.url] == 'undefined'){
             accessoryMeshes[a.url] = new THREE.Object3D();// pending parent object
-            loadGltf(a.url, accessoryMeshes[a.url]);
+            accessoryMeshes[a.url].name = a.url;// pending parent object
+            loadGltf(a.url, accessoryMeshes[a.url]);// it will be added to the parent
           }
           // update transforms
           let parentMesh = accessoryMeshes[a.url];
@@ -411,7 +418,16 @@ export default {
           else {
             worldFollower.add(parentMesh);
           }
+          parentMesh.visible = a.enabled
         });
+
+        // also iterate through all my accessory meshes and make sure they need to be there
+        Object.keys(accessoryMeshes).forEach(accessoryUrl=>{
+          let parentMesh = accessoryMeshes[accessoryUrl];
+          if (!accessories.some(a=>a.url==accessoryUrl)){
+            parentMesh.visible=false;// just hide it lmao
+          }
+        })
 
       },
       deep:true      
@@ -445,10 +461,15 @@ export default {
     controls.target.set( 0.0, 1.0, 0.0 );
     controls.update();
     
-    
+    new RGBELoader().load(require('./royal_esplanade_1k.hdr'),function(texture){
+      texture.mapping=THREE.EquirectangularReflectionMapping;
+      hdriTexture = texture;
+    });
     if (this.vrmUrl){
       this.loadVrm(this.vrmUrl)
     }
+
+
   },
   destroyed(){
     // destroy scene

@@ -1,6 +1,7 @@
 {
     "extends": "@parcel/config-default",
     "transformers": {
-        "*.vrm": ["@parcel/transformer-raw"]
+        "*.vrm": ["@parcel/transformer-raw"],
+        "*.hdr": ["@parcel/transformer-raw"]
     }
 }
