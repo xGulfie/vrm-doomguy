@@ -81,7 +81,6 @@ export default {
       if (renderer && camera){
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setPixelRatio( window.devicePixelRatio * 1.5 );
-        camera.fov = 30;
         camera.aspect = window.innerWidth/window.innerHeight;
         camera.updateProjectionMatrix();
       } else {
@@ -307,14 +306,7 @@ export default {
         }
       });
 
-      // reset camera if needed
-      if(guiData.cameraNeedsReset){
-        guiData.cameraNeedsReset=false;
-        controls.reset();
-        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).getWorldPosition(controls.target);
-        controls.target.setY(controls.target.y + 0.1);
-        controls.update();
-      }
+
       // set material properties
       // vrm.materials[0].v0CompatShade = true;
       try{
@@ -323,7 +315,29 @@ export default {
         console.error(er);
       }
       renderer.toneMappingExposure = guiData.exposure;
-      
+    
+      if (camera.fov != guiData.fov){
+        debugger; 
+        camera.fov = guiData.fov;
+        camera.updateProjectionMatrix();
+      }
+        // handle gui camera stuff
+        if(guiData.cameraNeedsReset){
+          guiData.cameraNeedsReset=false;
+          controls.reset();
+          vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).getWorldPosition(controls.target);
+          controls.target.setY(controls.target.y + 0.1);
+          controls.update();
+      }
+      if (guiData.cameraLocationNeedsLoading){
+        loadDolly(controls);
+        guiData.cameraLocationNeedsLoading=false
+      }
+      else if (guiData.cameraLocationNeedsSaving){
+        saveDolly(controls);
+        guiData.cameraLocationNeedsSaving=false;
+      }
+    
       vrm.update(deltaTime);
 
       if (hdriTexture){
@@ -526,8 +540,33 @@ function loadGltf(url,intoObject){
     });
 }
 
-async function cacheAccessory(url){
-  awa
+function saveDolly(ctrls){
+  debugger
+  let d = {
+    cx:ctrls.object.position.x,
+    cy:ctrls.object.position.y,
+    cz:ctrls.object.position.z,
+
+    tx:ctrls.target.x,
+    ty:ctrls.target.y,
+    tz:ctrls.target.z
+  }
+  localStorage.setItem("cameraData",JSON.stringify(d))
+}
+
+function loadDolly(ctrls){
+  let d;
+  try{
+    d = JSON.parse(localStorage.getItem("cameraData"))
+  } catch{
+    d=null;
+  }
+  if (!d){
+    return;
+  }  
+  ctrls.target.set(d.tx,d.ty,d.tz);
+  ctrls.object.position.set(d.cx,d.cy,d.cz)
+  controls.update();
 }
 
 </script>

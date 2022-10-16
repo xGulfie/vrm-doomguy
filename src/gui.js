@@ -29,16 +29,29 @@ export let guiData = {
     speechBlend:0.8,
     mouthShape:"ee",
     exposure:1,
+    fov:30,
     revert:function(){
         gui.load(JSON.parse(localStorage.getItem("gui")))
     },
     save:function(){
         localStorage.setItem('gui',JSON.stringify(gui.save()));
-    },
+    },    
     reset:function(){
         if(!confirm("reset to defaults?"))
             return;
         gui.load(JSON.parse(localStorage.getItem("gui-defaults")))
+    },    
+    cameraLocationNeedsLoading:true,
+    cameraLocationNeedsSaving:false,
+    cameraNeedsReset:false,
+    saveCameraPosition:function(){
+        guiData.cameraLocationNeedsSaving=true;
+    },
+    loadCameraPosition:function(){
+        guiData.cameraLocationNeedsLoading=true;
+    },
+    resetCamera: function(){
+        guiData.cameraNeedsReset=true;
     }
 };
 
@@ -62,7 +75,7 @@ let getGui = function () {
     gui.add(guiData, "wasdMove").name("move with WASD/arrows");
     gui.add(guiData, "spaceJump").name("jump with space");
     gui.add(guiData, "autorun").name("auto-run without pressing Shift");
-    let lightingFolder = gui.addFolder("LIGHTING")
+    let lightingFolder = gui.addFolder("SCENE OPTIONS")
     lightingFolder.add(guiData, "lightIntensity", 0, 3)
     lightingFolder.addColor(guiData, "lightColor")
     guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor")
@@ -71,6 +84,7 @@ let getGui = function () {
     lightingFolder.add(guiData, "lightY", -1, 1)
     lightingFolder.add(guiData, "lightZ", -1, 1)
     lightingFolder.add(guiData, "useEnvmap")
+    lightingFolder.add(guiData, "fov",10,120)
     gui.add(guiData, "shoulderRotation", -0.2, 0.2)
     gui.add(guiData, "upperArmRotation", 0, 1.4)
     gui.add(guiData, "lowerArmRotation", 0, 0.5)
@@ -82,7 +96,11 @@ let getGui = function () {
     speechFolder.add(guiData, "mouthShape", ["aa","ih","ou","ee","oh"])
     gui.add(guiData,"revert")
     gui.add(guiData,"save")
-    gui.add(guiData,"reset").name("Reset ALL to DEFAULT")
+    gui.add(guiData,"reset").name("Reset to DEFAULT")
+    
+    gui.add(guiData,'saveCameraPosition').name('Save Camera Position')
+    gui.add(guiData,'loadCameraPosition').name('(R)eset Camera Position')
+    gui.add(guiData,"resetCamera").name("Reset Camera Position to DEFAULT")
 
     localStorage.setItem('gui-defaults',JSON.stringify(gui.save()))
 
@@ -101,27 +119,20 @@ let getGui = function () {
         helpEl.style.display = helpOpen ? 'block' : 'none';
     }
 
-    helpEl.innerHTML = `
-    <p>
+    helpEl.innerHTML = `<p>
     press H to show or (H)ide the main options menu
-    </p>
-    <p>
+
     press P for the (P)rops menu
-    </p>
-    <br>
-    <p>
+
+    press R to (R)eset the camera
+ 
     To use with an FPS, start up your game, then look around a little.
     Then, move your mouse very slowly for a moment, stop, and hit CTRL+SHIFT+M.
-    </p>
-    <br>
-    <p>
+
     Drag and drop a VRM file into the application to use that instead of this one.    
-    </p>
-    <br>
-    <p>
     You can pan and zoom by clicking and dragging. Left mouse to rotate, right mouse to pan, scroll to move in/out.
     </p>    
-    `;
+    `.split('\n').join('</p><p>');
     helpEl.style = "display:none;position:absolute;top:0;left:0;background:white;max-width:300px;cursor:pointer;";
     document.body.appendChild(helpEl);
     helpEl.addEventListener('click', toggleHelp);
@@ -139,6 +150,10 @@ let getGui = function () {
         if(e.key.toLowerCase() == "h"){
             guiData.toggleHide()
         }
+        else if (e.key.toLowerCase() == "r"){
+            guiData.resetCamera();
+            guiData.loadCameraPosition();
+        }
     });
     gui.domElement.addEventListener('keyup',function(e){
         if(e.key.toLowerCase() == "h"){
@@ -147,11 +162,6 @@ let getGui = function () {
     });
 
     gui.add(guiData,"toggleHide").name("Hide (H)")
-    guiData.cameraNeedsReset = false;
-    guiData.resetCamera = function(){
-        guiData.cameraNeedsReset=true;
-    }
-    gui.add(guiData,"resetCamera").name("Reset Camera")
 
     if (!window.localStorage.getItem("initialhelpdismissed")){
         toggleHelp();
