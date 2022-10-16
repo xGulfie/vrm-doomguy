@@ -17,20 +17,20 @@
                 </select>
             </label>
             
-            <input-slider @input="dataChanged" min="-1" max="1" label="X" v-model="prop.position.x"></input-slider>
-            <input-slider @input="dataChanged" min="-1" max="1" label="Y" v-model="prop.position.y"></input-slider>
-            <input-slider @input="dataChanged" min="-1" max="1" label="Z" v-model="prop.position.z"></input-slider>
+            <input-slider @input="dataChanged" :min="-1" :max="1" label="X" v-model="prop.position.x"></input-slider>
+            <input-slider @input="dataChanged" :min="-1" :max="1" label="Y" v-model="prop.position.y"></input-slider>
+            <input-slider @input="dataChanged" :min="-1" :max="1" label="Z" v-model="prop.position.z"></input-slider>
             
             <label>Uniform Scale
                 <input type="checkbox" v-model="prop.uniformScale" @input="dataChanged"/>
             </label>
-            <input-slider @input="dataChanged" min="0" max="2" label="Scale X" v-model="prop.scale.x"></input-slider>
-            <input-slider @input="dataChanged" min="0" max="2" label="Scale Y" v-model="prop.scale.y" :disabled="prop.uniformScale"></input-slider>
-            <input-slider @input="dataChanged" min="0" max="2" label="Scale Z" v-model="prop.scale.z" :disabled="prop.uniformScale"></input-slider>
+            <input-slider @input="dataChanged" :min="0" :max="2" label="Scale X" v-model="prop.scale.x"></input-slider>
+            <input-slider @input="dataChanged" :min="0" :max="2" label="Scale Y" v-model="prop.scale.y" :disabled="prop.uniformScale"></input-slider>
+            <input-slider @input="dataChanged" :min="0" :max="2" label="Scale Z" v-model="prop.scale.z" :disabled="prop.uniformScale"></input-slider>
 
-            <input-slider @input="dataChanged" min="0" :max="Math.PI*2" label="Rotate X" v-model="prop.rotation.x"></input-slider>
-            <input-slider @input="dataChanged" min="0" :max="Math.PI*2" label="Rotate Y" v-model="prop.rotation.y"></input-slider>
-            <input-slider @input="dataChanged" min="0" :max="Math.PI*2" label="Rotate Z" v-model="prop.rotation.z"></input-slider>
+            <input-slider @input="dataChanged" :min="0" :max="360" label="Rotate X" v-model="prop.rotation.x"></input-slider>
+            <input-slider @input="dataChanged" :min="0" :max="360" label="Rotate Y" v-model="prop.rotation.y"></input-slider>
+            <input-slider @input="dataChanged" :min="0" :max="360" label="Rotate Z" v-model="prop.rotation.z"></input-slider>
 
         </div>
     </div>

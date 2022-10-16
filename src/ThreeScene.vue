@@ -325,11 +325,9 @@ export default {
           scene.environment=null;
         }
       }
-      debugger
       renderer.render( scene, camera );
     },
     loadVrm(val){
-      debugger
       const loader = new GLTFLoader();
       loader.register((parser)=>new VRMLoaderPlugin(parser));
       loader.load(
@@ -412,7 +410,11 @@ export default {
           // update transforms
           let parentMesh = accessoryMeshes[a.url];
           parentMesh.position.set(a.position.x, a.position.y, a.position.z);
-          parentMesh.rotation.set(a.rotation.x, a.rotation.y, a.rotation.z);
+          parentMesh.rotation.set(
+            THREE.MathUtils.DEG2RAD * a.rotation.x,
+            THREE.MathUtils.DEG2RAD * a.rotation.y,
+            THREE.MathUtils.DEG2RAD * a.rotation.z
+          );
           parentMesh.scale.set(a.scale.x, a.scale.y, a.scale.z);
           if (a.attachment === "head"){
             headFollower.add(parentMesh);
@@ -455,7 +457,7 @@ export default {
     
     scene.add( light );
     
-    camera = new THREE.PerspectiveCamera( 30.0, window.innerWidth/window.innerHeight, 0.1, 20.0 );
+    camera = new THREE.PerspectiveCamera( 30.0, window.innerWidth/window.innerHeight, 0.1, 100.0 );
     camera.position.set( 0.0, 1.0, 1.5 );
     
     controls = new OrbitControls( camera, renderer.domElement );
