@@ -68,6 +68,7 @@ let accessoryMeshes = {};// accessory mesh by url
 let headFollower = new THREE.Object3D();
 let worldFollower = new THREE.Object3D();
 let chestFollower = new THREE.Object3D();
+let neckFollower = new THREE.Object3D();
 
 // vue app
 export default {
@@ -374,6 +375,7 @@ export default {
         vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head )?.getWorldPosition(controls.target);
         vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head )?.add(headFollower);
         vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Chest )?.add(chestFollower);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Neck )?.add(neckFollower);
         controls.target.setY(controls.target.y + 0.1)
         controls.update();
         vrm.springBoneManager.reset();
@@ -429,6 +431,9 @@ export default {
           }
           else if(a.attachment === "chest"){
             chestFollower.add(parentMesh)
+          }
+          else if(a.attachment === "neck"){
+            neckFollower.add(parentMesh)
           }
           else {
             worldFollower.add(parentMesh);

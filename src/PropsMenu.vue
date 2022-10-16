@@ -14,6 +14,7 @@
                 <select @change="dataChanged" v-model="prop.attachment">
                     <option value="head">Head</option> 
                     <option value="world">World</option>
+                    <option value="neck">Neck</option>
                     <option value="chest">Chest</option>
                 </select>
             </label>
