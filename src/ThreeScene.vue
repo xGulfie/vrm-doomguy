@@ -9,6 +9,12 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+// import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+// const THREE_PATH = `https://unpkg.com/three@0.137.x`
+// const DRACO_LOADER = new DRACOLoader().setDecoderPath( `${THREE_PATH}/examples/js/libs/draco/gltf/` );
+// const KTX2_LOADER = new KTX2Loader().setTranscoderPath( `${THREE_PATH}/examples/js/libs/basis/` );
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { VRMLoaderPlugin, VRMUtils, VRMSchema, VRMHumanBoneName, VRMExpressionPresetName } from '@pixiv/three-vrm';
 require("./audioAnalysis")
 import {getGuiData} from "./gui.js"
@@ -61,6 +67,7 @@ function blink(tSec){
 let accessoryMeshes = {};// accessory mesh by url
 let headFollower = new THREE.Object3D();
 let worldFollower = new THREE.Object3D();
+let chestFollower = new THREE.Object3D();
 
 // vue app
 export default {
@@ -363,9 +370,10 @@ export default {
         if (vrm.meta.metaVersion.toString() == "0"){
           vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).rotation.y = Math.PI;
         }
-        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ).position?.copy(originalHipPos);
-        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).getWorldPosition(controls.target);
-        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ).add(headFollower);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips )?.position?.copy(originalHipPos);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head )?.getWorldPosition(controls.target);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head )?.add(headFollower);
+        vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Chest )?.add(chestFollower);
         controls.target.setY(controls.target.y + 0.1)
         controls.update();
         vrm.springBoneManager.reset();
@@ -418,6 +426,9 @@ export default {
           parentMesh.scale.set(a.scale.x, a.scale.y, a.scale.z);
           if (a.attachment === "head"){
             headFollower.add(parentMesh);
+          }
+          else if(a.attachment === "chest"){
+            chestFollower.add(parentMesh)
           }
           else {
             worldFollower.add(parentMesh);
@@ -486,7 +497,21 @@ export default {
 
 function loadGltf(url,intoObject){
     return new Promise((resolve,reject)=>{
-        new GLTFLoader().load(url,(gltf)=>{
+        new GLTFLoader()
+        // .setDRACOLoader( DRACO_LOADER )
+        // .setKTX2Loader( KTX2_LOADER.detectSupport( renderer ) )
+        .setMeshoptDecoder( MeshoptDecoder )
+        .load(url,(gltf)=>{
+            // const three = THREE
+            const box = new THREE.Box3().setFromObject(gltf.scene);
+            const size = box.getSize(new THREE.Vector3());
+            const center = new THREE.Vector3();
+            const sc = 1/Math.max(size.x,size.y,size.z)
+            gltf.scene.scale.set(sc,sc,sc);
+            // box.getCenter(center);
+            // gltf.scene.position.addScaledVector(center,-sc);
+            console.log(center)
+            gltf.scene.rotation.y=Math.PI
             intoObject.add(gltf.scene);
         },
         (progress)=>{},

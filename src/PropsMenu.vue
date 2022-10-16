@@ -12,14 +12,15 @@
             <br>
             <label>Attachment
                 <select @change="dataChanged" v-model="prop.attachment">
-                    <option value="head">head</option> 
-                    <option value="world">world</option>
+                    <option value="head">Head</option> 
+                    <option value="world">World</option>
+                    <option value="chest">Chest</option>
                 </select>
             </label>
             
-            <input-slider @input="dataChanged" :min="-1" :max="1" label="X" v-model="prop.position.x"></input-slider>
-            <input-slider @input="dataChanged" :min="-1" :max="1" label="Y" v-model="prop.position.y"></input-slider>
-            <input-slider @input="dataChanged" :min="-1" :max="1" label="Z" v-model="prop.position.z"></input-slider>
+            <input-slider @input="dataChanged" :min="-0.4" :max="0.4" label="X" v-model="prop.position.x"></input-slider>
+            <input-slider @input="dataChanged" :min="-0.4" :max="0.4" label="Y" v-model="prop.position.y"></input-slider>
+            <input-slider @input="dataChanged" :min="-0.4" :max="0.4" label="Z" v-model="prop.position.z"></input-slider>
             
             <label>Uniform Scale
                 <input type="checkbox" v-model="prop.uniformScale" @input="dataChanged"/>
