@@ -427,9 +427,12 @@ export default {
 
         accessories.forEach(a=>{
           if (a.url && typeof accessoryMeshes[a.url] == 'undefined'){
+            if (!a.enabled){
+              return;// not enabled? Don't load it til it is.
+            }
             accessoryMeshes[a.url] = new THREE.Object3D();// pending parent object
-            accessoryMeshes[a.url].name = a.url;// pending parent object
-            loadGltf(a.url, accessoryMeshes[a.url]);// it will be added to the parent
+            accessoryMeshes[a.url].name = a.url;
+            loadGltf(a.url, accessoryMeshes[a.url]);// the gltf will be added to the parent when it's loaded
           }
           // update transforms
           let parentMesh = accessoryMeshes[a.url];
@@ -516,27 +519,28 @@ export default {
 
 function loadGltf(url,intoObject){
     return new Promise((resolve,reject)=>{
-        new GLTFLoader()
-        // .setDRACOLoader( DRACO_LOADER )
-        // .setKTX2Loader( KTX2_LOADER.detectSupport( renderer ) )
-        .setMeshoptDecoder( MeshoptDecoder )
-        .load(url,(gltf)=>{
-            // const three = THREE
-            const box = new THREE.Box3().setFromObject(gltf.scene);
-            const size = box.getSize(new THREE.Vector3());
-            const center = new THREE.Vector3();
-            const sc = 1/Math.max(size.x,size.y,size.z)
-            gltf.scene.scale.set(sc,sc,sc);
-            // box.getCenter(center);
-            // gltf.scene.position.addScaledVector(center,-sc);
-            console.log(center)
-            gltf.scene.rotation.y=Math.PI
-            intoObject.add(gltf.scene);
-        },
-        (progress)=>{},
-        (error)=>{
-            reject(error);
-        })
+      new GLTFLoader()
+      // .setDRACOLoader( DRACO_LOADER )
+      // .setKTX2Loader( KTX2_LOADER.detectSupport( renderer ) )
+      .setMeshoptDecoder( MeshoptDecoder )
+      .load(url,(gltf)=>{
+          // const three = THREE
+          const box = new THREE.Box3().setFromObject(gltf.scene);
+          const size = box.getSize(new THREE.Vector3());
+          const center = new THREE.Vector3();
+          const sc = 1/Math.max(size.x,size.y,size.z)
+          gltf.scene.scale.set(sc,sc,sc);
+          // box.getCenter(center);
+          // gltf.scene.position.addScaledVector(center,-sc);
+          console.log(center)
+          gltf.scene.rotation.y=Math.PI
+          intoObject.add(gltf.scene);
+          resolve();
+      },
+      (progress)=>{},
+      (error)=>{
+          reject(error);
+      })
     });
 }
 

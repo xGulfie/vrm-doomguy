@@ -105,6 +105,7 @@ export default{
     height:calc(100vh - 30px);
     background:rgba(255,0,0,0.0);
     border:solid 2px #0f0;
+    border-top-width: 0;
     box-sizing: border-box;
     position:absolute;
     bottom:0;

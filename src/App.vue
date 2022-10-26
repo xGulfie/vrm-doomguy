@@ -3,7 +3,6 @@
   <title-bar v-if="addTitleBar" @propsmenu="onKey('p',false,false)" @hidemenu="onKey('h',true,false)"></title-bar>
   <div class="fullsize" @dragover.prevent @dragenter.prevent @drop.prevent="dragFile">
     <three-scene :vrmUrl="vrmUrl" :appState="appState" :accessories="accessories"></three-scene>
-    <div>OK</div>
     <props-menu @accessoriesChanged="handleAccessories" v-show="appState.p"></props-menu>
   </div>
 </div>
@@ -71,7 +70,6 @@ const guiData = getGuiData();
               if (!wentDown && !isGlobal){
                 // toggle key released
                 this.appState[map[1]] = !this.appState[map[1]];
-
               }
               return true;
               // regular press
