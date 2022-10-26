@@ -44,7 +44,6 @@ let blinkStartTime = -1000000;
 let grounded = true;
 
 const ZERO = new THREE.Vector3(0,0,0)
-let mouseDirVector = new THREE.Vector3(0,0,0);
 let mouseDirVectorSmooth = new THREE.Vector3(0,0,0);
 let integratedLook = new THREE.Vector3(0,0,0);
 const light = new THREE.DirectionalLight(0xffffff)
@@ -69,6 +68,9 @@ let headFollower = new THREE.Object3D();
 let worldFollower = new THREE.Object3D();
 let chestFollower = new THREE.Object3D();
 let neckFollower = new THREE.Object3D();
+
+let dummyObject = new THREE.Object3D();
+let dummyVec = new THREE.Vector3();
 
 // vue app
 export default {
@@ -101,15 +103,16 @@ export default {
       let vrm = scene.userData.vrm;
       
       // move stuffs
-      let hips = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips );
-      let neck = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Neck );
-      let shoulderR = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightShoulder );
-      let shoulderL = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftShoulder );
-      let armR = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightUpperArm );
-      let armL = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftUpperArm );
-      let arm2R = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightLowerArm );
-      let arm2L = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftLowerArm );
-      let chest = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Chest );
+      let hips = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Hips ) || dummyObject;
+      let neck = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Neck ) || dummyObject;
+      let head = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Head ) || dummyObject;
+      let shoulderR = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightShoulder ) || dummyObject;
+      let shoulderL = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftShoulder ) || dummyObject;
+      let armR = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightUpperArm ) || dummyObject;
+      let armL = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftUpperArm ) || dummyObject;
+      let arm2R = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.RightLowerArm ) || dummyObject;
+      let arm2L = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.LeftLowerArm ) || dummyObject;
+      let chest = vrm.humanoid.getNormalizedBoneNode( VRMHumanBoneName.Chest ) || dummyObject;
       
       // calculate jump data
       let jumping = (time >= jumpStartTime) && (time - jumpStartTime) <= guiData.jumpDuration;
@@ -165,6 +168,13 @@ export default {
         walkBlendVector.x = 0;
         walkBlendVector.y = 0;
       }
+
+      if (guiData.invertX){
+        walkBlendVector.x*=-1;
+      }
+      if (guiData.invertY){
+        walkBlendVector.y*=-1;
+      }
       
       if (walkBlendVector.lengthSq() > 1){
         walkBlendVector.normalize();
@@ -176,6 +186,8 @@ export default {
       // tilt the head
       neck.rotation.y = walkBlendVectorSmooth.x * - 0.4;
       neck.rotation.x = -walkBlendVectorSmooth.y * -0.1;
+      head.rotation.x=0;
+      head.rotation.y=0;
       // tilt the chest
       chest.rotation.y = walkBlendVectorSmooth.x * 0.5;
       // chest.rotation.x = -walkBlendVectorSmooth.y * 0.999;
@@ -239,6 +251,7 @@ export default {
       // normalized window eye look
       let lookX = -1 * (this.appState.mousePosition[0] - this.appState.windowCenter[0]) / window.screen.width;
       let lookY = -1 * (this.appState.mousePosition[1] - this.appState.windowCenter[1]) / window.screen.height;
+
       // if it's FPS mode:
       if (this.appState.fpsLookMode){
         let mvX, mvY;
@@ -271,6 +284,7 @@ export default {
       let lookLen = Math.sqrt(lookX*lookX+lookY*lookY);
       if (lookLen > 1){lookX/=lookLen;lookY/=lookLen;}
       
+      // FINALLY apply the look vector to the eyes
       if (lookX < 0){
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookLeft, Math.abs(lookX)*0.7);
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookRight, 0);
@@ -285,6 +299,23 @@ export default {
       } else {
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookDown, 0);
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookUp, Math.abs(lookY)*0.8);
+      }
+
+      // and maybe apply look vector to head and neck
+      if (guiData.turnHead){
+        let headLookFacX = -1*guiData.turnHeadNeckBlend * guiData.turnHeadFactorX
+        let headLookFacY = guiData.turnHeadNeckBlend * guiData.turnHeadFactorY;
+        let neckLookFacX = -1*(1-guiData.turnHeadNeckBlend) * guiData.turnHeadFactorX;
+        let neckLookFacY = (1-guiData.turnHeadNeckBlend) * guiData.turnHeadFactorY;
+        let turnX = Math.asin(lookX);
+        let turnY = Math.asin(lookY);        
+
+        // it's confusing but the actual bone rotation is not intuitively oriented
+        head.rotation.y+= turnX*headLookFacX;
+        head.rotation.x+= turnY*headLookFacY;
+
+        neck.rotation.y+= turnX*neckLookFacX;
+        neck.rotation.x+= turnY*neckLookFacY;
       }
       
       // light:
@@ -312,12 +343,11 @@ export default {
       try{
         vrm.materials[0].shadeColorFactor.set(guiData.ambientColor);
       } catch(er){
-        console.error(er);
+        // console.error(er);
       }
       renderer.toneMappingExposure = guiData.exposure;
     
       if (camera.fov != guiData.fov){
-        debugger; 
         camera.fov = guiData.fov;
         camera.updateProjectionMatrix();
       }
@@ -545,7 +575,6 @@ function loadGltf(url,intoObject){
 }
 
 function saveDolly(ctrls){
-  debugger
   let d = {
     cx:ctrls.object.position.x,
     cy:ctrls.object.position.y,
@@ -553,7 +582,8 @@ function saveDolly(ctrls){
 
     tx:ctrls.target.x,
     ty:ctrls.target.y,
-    tz:ctrls.target.z
+    tz:ctrls.target.z,
+    fov:ctrls.object.fov
   }
   localStorage.setItem("cameraData",JSON.stringify(d))
 }
@@ -570,6 +600,9 @@ function loadDolly(ctrls){
   }  
   ctrls.target.set(d.tx,d.ty,d.tz);
   ctrls.object.position.set(d.cx,d.cy,d.cz)
+  ctrls.object.fov = d.fov;
+  guiData.fov=d.fov;
+  ctrls.object.updateProjectionMatrix();
   controls.update();
 }
 

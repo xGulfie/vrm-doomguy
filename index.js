@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, dialog } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, dialog, webContents } = require('electron');
 const { platform } = require('os');
 const path = require('path')
 const lepikEvents = require('lepikevents').events;
@@ -20,6 +20,8 @@ const width = Math.round(clArgs.size || clArgs.width || 800);
 const height = Math.round(clArgs.height || width*(3/4));
 
 app.commandLine.appendSwitch('use-fake-ui-for-media-stream')
+app.commandLine.appendSwitch('high-dpi-support', 1)// see below
+app.commandLine.appendSwitch('force-device-scale-factor', 1)// force UI scale to be 1, if only so that window and screen size are accurate
 // app.commandLine.appendSwitch('force_high_performance_gpu')
 // app.commandLine.appendSwitch('enable-webgl')
 
@@ -31,7 +33,7 @@ function createWindow () {
     height: height,
     x:0,
     y:0,
-    useContentSize: true,
+    // useContentSize: true,
     transparent: !greenScreen,
     backgroundColor: bgColor,
     webPreferences: {
@@ -47,7 +49,8 @@ function createWindow () {
   })
 
   win.loadFile(`build/index.html`,{search: !greenScreen?"addframe":""});
- 
+  win.webContents.backgroundThrottling=false;
+
   // register key handling
   lepikEvents.on('keyPress', (key) => {
     if(!win){return;}
@@ -76,15 +79,14 @@ function createWindow () {
 
   win.on('move',onMotion)
   win.on('resize',onMotion)
+  win.on("maximize",onMotion)
+  win.on("minimize",onMotion)
   // ok so I'm just gonna setTimeout to send new position to it once on window init
   setTimeout(onMotion,1000)
 
 }
 
 app.whenReady().then(() => {
-  // globalShortcut.register('CommandOrControl+W', () => {
-  //   console.log('Electron loves global shortcuts!')
-  // })
   ipcMain.handle("requestGltf",async function(){
     const result = await dialog.showOpenDialog({
       properties:["openFile"],

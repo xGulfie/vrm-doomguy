@@ -67,9 +67,14 @@ export default{
     flex-wrap:nowrap;
     justify-content: space-between;
 }
+@media all and (max-width:300px) {
+.title{
+    display:none;
+}
+}
+
 .title-bar .title{
-    margin-left:1em;
-    font-size:18px;
+    font-size:16px;
     line-height: 30px;
     cursor:pointer;
     flex-shrink:1;

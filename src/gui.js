@@ -12,6 +12,19 @@ export let guiData = {
     jumpDuration: .6667,
     jumpAmplitude: 0.15,
     blinkDuration: 0.1,
+    shoulderRotation: 0.12,
+    upperArmRotation: 1.1,
+    lowerArmRotation: 0.35,
+    armSwing:1,
+    wasdMove:true,
+    invertX:false,
+    invertY:false,
+    spaceJump:true,
+    autorun:false,
+    turnHead:false,
+    turnHeadNeckBlend:0.4,
+    turnHeadFactorX:0.8,
+    turnHeadFactorY:0.8,
     lightColor: '#FFFFFF',
     ambientColor: '#ff0000',
     useEnvmap: true,
@@ -19,20 +32,14 @@ export let guiData = {
     lightX: 1,
     lightY: 1,
     lightZ: 1,
-    shoulderRotation: 0.12,
-    upperArmRotation: 1.1,
-    lowerArmRotation: 0.35,
-    armSwing:1,
-    wasdMove:true,
-    spaceJump:true,
-    autorun:false,
+    exposure:1,
+    fov:30,
     speechEnabled:true,
     speechFloor: 0.1,
     speechCeiling:0.25,
     speechBlend:0.8,
     mouthShape:"ee",
-    exposure:1,
-    fov:30,
+
     revert:function(){
         gui.load(JSON.parse(localStorage.getItem("gui")))
     },
@@ -65,25 +72,43 @@ export let guiData = {
     }
 };
 
-const guiDefaults = JSON.parse(JSON.stringify(guiData));
-
 let getGui = function () {
     if (gui) { return gui; }
     gui = new dat.GUI({});
 
-    gui.add(guiData,"fpsLookSensitivity",0,10)
-    gui.add(guiData, "runAmplitude", 0, .04)
-    gui.add(guiData, "walkAmplitude", 0, .04)
-    gui.add(guiData, "runSpeed", 0,0.5)
-    gui.add(guiData, "walkSpeed", 0,0.3)
-    gui.add(guiData, "armSwing", 0,2)
-    gui.add(guiData, "jumpDuration", 0, 2)
-    gui.add(guiData, "jumpAmplitude", 0, 0.4)
-    gui.add(guiData, "blinkDuration", 0, 0.4)
-    gui.add(guiData, "wasdMove").name("move with WASD/arrows");
-    gui.add(guiData, "spaceJump").name("jump with space");
-    gui.add(guiData, "autorun").name("auto-run without pressing Shift");
-    let lightingFolder = gui.addFolder("SCENE OPTIONS")
+    let lookFolder = gui.addFolder("LOOK")
+    lookFolder.add(guiData,"fpsLookSensitivity",0,10)
+    lookFolder.add(guiData,"turnHead").name("turn head with look")
+    lookFolder.add(guiData,"turnHeadNeckBlend",0,1).name("turn head vs. neck")
+    lookFolder.add(guiData,"turnHeadFactorX",-1.5,1.5)
+    lookFolder.add(guiData,"turnHeadFactorY",-1.5,1.5)
+    lookFolder.add(guiData, "blinkDuration", 0, 0.4)
+
+    let animFolder = gui.addFolder("ANIMATION")
+    animFolder.add(guiData, "runAmplitude", 0, .04)
+    animFolder.add(guiData, "walkAmplitude", 0, .04)
+    animFolder.add(guiData, "runSpeed", 0,0.5)
+    animFolder.add(guiData, "walkSpeed", 0,0.3)
+    animFolder.add(guiData, "armSwing", 0,2)
+    animFolder.add(guiData, "jumpDuration", 0, 2)
+    animFolder.add(guiData, "jumpAmplitude", 0, 0.4)
+    animFolder.add(guiData, "wasdMove").name("move with WASD/arrows");
+    animFolder.add(guiData, "invertX").name("invert left/right arrows");
+    animFolder.add(guiData, "invertY").name("invert up/down arrows");
+    animFolder.add(guiData, "spaceJump").name("jump with space");
+    animFolder.add(guiData, "autorun").name("auto-run without pressing Shift");
+    animFolder.add(guiData, "shoulderRotation", -0.2, 0.2)
+    animFolder.add(guiData, "upperArmRotation", 0, 1.4)
+    animFolder.add(guiData, "lowerArmRotation", 0, 0.5)
+
+    let speechFolder = gui.addFolder("SPEECH")
+    speechFolder.add(guiData,"speechEnabled")
+    speechFolder.add(guiData, "speechFloor", 0, 0.5)
+    speechFolder.add(guiData, "speechCeiling", 0, 0.5);
+    speechFolder.add(guiData, "speechBlend", 0.25, .9999)
+    speechFolder.add(guiData, "mouthShape", ["aa","ih","ou","ee","oh"])
+
+    let lightingFolder = gui.addFolder("LIGHTING / CAMERA")
     lightingFolder.add(guiData, "lightIntensity", 0, 3)
     lightingFolder.addColor(guiData, "lightColor")
     guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor")
@@ -93,22 +118,13 @@ let getGui = function () {
     lightingFolder.add(guiData, "lightZ", -1, 1)
     lightingFolder.add(guiData, "useEnvmap")
     lightingFolder.add(guiData, "fov",10,120)
-    gui.add(guiData, "shoulderRotation", -0.2, 0.2)
-    gui.add(guiData, "upperArmRotation", 0, 1.4)
-    gui.add(guiData, "lowerArmRotation", 0, 0.5)
-    let speechFolder = gui.addFolder("SPEECH")
-    speechFolder.add(guiData,"speechEnabled")
-    speechFolder.add(guiData, "speechFloor", 0, 0.5)
-    speechFolder.add(guiData, "speechCeiling", 0, 0.5);
-    speechFolder.add(guiData, "speechBlend", 0.25, .9999)
-    speechFolder.add(guiData, "mouthShape", ["aa","ih","ou","ee","oh"])
+    lightingFolder.add(guiData,'saveCameraPosition').name('Save Camera Position & FOV')
+    lightingFolder.add(guiData,'loadCameraPosition').name('(R)evert Camera Position & FOV')
+    lightingFolder.add(guiData,"resetCamera").name("Reset Camera Position & FOV to DEFAULT")
+
     gui.add(guiData,"revert")
     gui.add(guiData,"save")
-    gui.add(guiData,"reset").name("Reset to DEFAULT")
-    
-    gui.add(guiData,'saveCameraPosition').name('Save Camera Position')
-    gui.add(guiData,'loadCameraPosition').name('(R)eset Camera Position')
-    gui.add(guiData,"resetCamera").name("Reset Camera Position to DEFAULT")
+    gui.add(guiData,"reset").name("Reset to DEFAULT")    
 
     localStorage.setItem('gui-defaults',JSON.stringify(gui.save()))
 
@@ -153,13 +169,6 @@ let getGui = function () {
         }
     });
 
-    setTimeout(()=>{
-        console.log(window.mainApp);
-        window.mainApp.$on("togglemenu",function(){
-            console.log("MENU TOGGLES")
-        })    
-    },10)
-
     gui.add(guiData,"toggleHide").name("Hide (H)")
 
     if (!window.localStorage.getItem("initialhelpdismissed")){
@@ -168,6 +177,15 @@ let getGui = function () {
     } else {
         gui.hide();
     }
+
+    let css = document.createElement("style")
+    css.setAttribute("type","text/css")
+    css.innerHTML=".lil-gui.root.autoPlace{top:30px;max-height:calc(100vh - 30px);}";
+    document.body.appendChild(css)
+
+    gui.folders.forEach(folder=>{
+        folder.close()
+    })
 
     return gui;
 }
