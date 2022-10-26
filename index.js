@@ -3,6 +3,7 @@ const { platform } = require('os');
 const path = require('path')
 const lepikEvents = require('lepikevents').events;
 const clArgs = require('yargs/yargs')(process.argv.slice(2)).argv
+const package_json = require("./package.json");
 
 const greenScreen = clArgs.greenscreen || clArgs.greenScreen;
 let bgColor = greenScreen ? '#ff00ff00' : '#00ffffff';
@@ -42,10 +43,10 @@ function createWindow () {
     autoHideMenuBar:true,
     alwaysOnTop:onTop,
     icon:"icon.png",
-    title:"Gulfievision™"
+    title:package_json.windowTitle
   })
 
-  win.loadFile('build/index.html');
+  win.loadFile(`build/index.html`,{search: !greenScreen?"addframe":""});
  
   // register key handling
   lepikEvents.on('keyPress', (key) => {
@@ -85,10 +86,12 @@ app.whenReady().then(() => {
   //   console.log('Electron loves global shortcuts!')
   // })
   ipcMain.handle("requestGltf",async function(){
-    const result = await dialog.showOpenDialog()
-      // properties:["openFile"],
-      // title:"pick a file!",
-      // filters:[{name:"model files (.gltf,.glb)",extensions:["gltf","glb"]}]
+    const result = await dialog.showOpenDialog({
+      properties:["openFile"],
+      title:"Choose a prop model...",
+      filters:[{name:"model files (.gltf,.glb)",extensions:["gltf","glb"]}]
+    })
+      
 
     if (result.canceled || typeof result.filePaths == 'undefined'){
       return null
@@ -101,6 +104,19 @@ app.whenReady().then(() => {
       return ret
     }
 
+  });
+
+  ipcMain.on('requestMinimize',function(){
+      win?.minimize();
+  });
+
+  ipcMain.on('requestMaximize',function(){
+    if(!win){return}
+    if (win.isMaximized()){
+      win.unmaximize();
+    } else {
+      win.maximize()
+    }
   });
 
 

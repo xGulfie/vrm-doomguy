@@ -1,10 +1,10 @@
 <template>
 <div class="fullsize">
-  <input style="display:none" type="file"/>
+  <title-bar v-if="addTitleBar" @propsmenu="onKey('p',false,false)" @hidemenu="onKey('h',true,false)"></title-bar>
   <div class="fullsize" @dragover.prevent @dragenter.prevent @drop.prevent="dragFile">
     <three-scene :vrmUrl="vrmUrl" :appState="appState" :accessories="accessories"></three-scene>
     <div>OK</div>
-    <props-menu @accessoriesChanged="handleAccessories"></props-menu>
+    <props-menu @accessoriesChanged="handleAccessories" v-show="appState.p"></props-menu>
   </div>
 </div>
 </template>
@@ -13,6 +13,8 @@
 
 import { VueElement } from "vue";
 import {toast} from "./toast"
+import {getGuiData} from "./gui.js"
+const guiData = getGuiData();
   export default {
     data() {
       return {
@@ -23,10 +25,12 @@ import {toast} from "./toast"
           windowCenter:[0,0],
           mousePosition:[0,0,0],
           fpsLookCenter:[0,0],
+          p:false
         },
         vrm:null,
-        vrmUrl:require('./example.vrm'),
-        accessories:[]
+        vrmUrl:require('./example.vrm'), 
+        accessories:[],
+        addTitleBar:window.location.search.indexOf("addframe") > -1
       };
     },
     methods:{
@@ -57,18 +61,28 @@ import {toast} from "./toast"
           ['shift','shift'],
           ['ctrl','ctrl'],
           ['m','m'],
+          ['p','p',true],
+          ['h','h'],
+          ['r','r']
         ]).some((map)=>{
           if (key == map[0]){
             // handle toggles
             if (map[2]){
-                if (!wentDown){
+              if (!wentDown && !isGlobal){
                 // toggle key released
                 this.appState[map[1]] = !this.appState[map[1]];
+
               }
               return true;
               // regular press
             } else {
               this.appState[map[1]] = wentDown;
+              if (key == 'r' && wentDown && !isGlobal){
+                guiData.resetCamera();
+                guiData.loadCameraPosition();
+              } else if (key == 'h' && wentDown && !isGlobal){
+                guiData.toggleHide();
+              }
               return true;
             }
           }

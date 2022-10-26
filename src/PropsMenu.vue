@@ -1,5 +1,5 @@
 <template>
-    <div class="propsmenu" v-if="showMenu" style="position:absolute;top:0;left:0;background:rgba(0,0,0,0.5);overflow-x:hidden;max-height:100%;">
+    <div class="propsmenu" style="position:absolute;top:0;left:0;background:rgba(0,0,0,0.5);overflow-x:hidden;max-height:100%;margin-top:30px;">
         <input type="button" @click="addGltf" value="Add Prop">
         <div v-for="prop,idx in objects " :key="prop.url">
             <br>

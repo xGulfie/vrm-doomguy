@@ -1,5 +1,8 @@
 const dat = require('lil-gui')
 
+let helpOpen = false;
+let gui = null;
+
 export let guiData = {
     fpsLookSensitivity:1,
     runAmplitude: 0.02,
@@ -52,13 +55,18 @@ export let guiData = {
     },
     resetCamera: function(){
         guiData.cameraNeedsReset=true;
+    },
+    toggleHide:function(){
+        if (gui._hidden){
+            gui.show()
+        } else {
+            gui.hide()
+        }
     }
 };
 
 const guiDefaults = JSON.parse(JSON.stringify(guiData));
 
-let helpOpen = false;
-let gui = null;
 let getGui = function () {
     if (gui) { return gui; }
     gui = new dat.GUI({});
@@ -139,27 +147,18 @@ let getGui = function () {
     guiData.toggleHelp=toggleHelp;
     gui.add(guiData,"toggleHelp").name("Help")
 
-    guiData.toggleHide =function(){
-        if (gui._hidden){
-            gui.show()
-        } else {
-            gui.hide()
-        }
-    }
-    window.addEventListener('keyup',function(e){
-        if(e.key.toLowerCase() == "h"){
-            guiData.toggleHide()
-        }
-        else if (e.key.toLowerCase() == "r"){
-            guiData.resetCamera();
-            guiData.loadCameraPosition();
-        }
-    });
     gui.domElement.addEventListener('keyup',function(e){
         if(e.key.toLowerCase() == "h"){
             guiData.toggleHide()
         }
     });
+
+    setTimeout(()=>{
+        console.log(window.mainApp);
+        window.mainApp.$on("togglemenu",function(){
+            console.log("MENU TOGGLES")
+        })    
+    },10)
 
     gui.add(guiData,"toggleHide").name("Hide (H)")
 

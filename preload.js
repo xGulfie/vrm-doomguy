@@ -19,5 +19,7 @@ events.forEach((eventName)=>{
 });
 
 opts['showGltfDialog'] = ()=> ipcRenderer.invoke("requestGltf")
+opts['requestMinimize'] = ()=> ipcRenderer.send("requestMinimize")
+opts['requestMaximize'] = ()=> ipcRenderer.send("requestMaximize")
 
 contextBridge.exposeInMainWorld('electronAPI', opts);

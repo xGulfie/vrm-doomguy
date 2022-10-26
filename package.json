@@ -4,6 +4,7 @@
   "description": "",
   "private": true,
   "main": "index.js",
+  "windowTitle":"GulfieVision™",
   "dependencies": {
     "electron": "^20.1.4",
     "lepikevents": "^1.6.5",
