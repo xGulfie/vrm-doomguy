@@ -35,8 +35,8 @@ export let guiData = {
     exposure:1,
     fov:30,
     speechEnabled:true,
-    speechFloor: 0.1,
-    speechCeiling:0.25,
+    speechFloor: 0.15,
+    speechRange:0.05,
     speechBlend:0.8,
     mouthShape:"ee",
 
@@ -77,12 +77,12 @@ let getGui = function () {
     gui = new dat.GUI({});
 
     let lookFolder = gui.addFolder("LOOK")
-    lookFolder.add(guiData,"fpsLookSensitivity",0,10)
+    lookFolder.add(guiData,"fpsLookSensitivity",0,10).name("fps look sensitivity")
     lookFolder.add(guiData,"turnHead").name("turn head with look")
     lookFolder.add(guiData,"turnHeadNeckBlend",0,1).name("turn head vs. neck")
-    lookFolder.add(guiData,"turnHeadFactorX",-1.5,1.5)
-    lookFolder.add(guiData,"turnHeadFactorY",-1.5,1.5)
-    lookFolder.add(guiData, "blinkDuration", 0, 0.4)
+    lookFolder.add(guiData,"turnHeadFactorX",-1.5,1.5).name("horizontal head turn factor")
+    lookFolder.add(guiData,"turnHeadFactorY",-1.5,1.5).name("vertical head turn factor")
+    lookFolder.add(guiData, "blinkDuration", 0, 0.4).name("blink duration")
 
     let animFolder = gui.addFolder("ANIMATION")
     animFolder.add(guiData, "runAmplitude", 0, .04)
@@ -102,28 +102,28 @@ let getGui = function () {
     animFolder.add(guiData, "lowerArmRotation", 0, 0.5)
 
     let speechFolder = gui.addFolder("SPEECH")
-    speechFolder.add(guiData,"speechEnabled")
-    speechFolder.add(guiData, "speechFloor", 0, 0.5)
-    speechFolder.add(guiData, "speechCeiling", 0, 0.5);
-    speechFolder.add(guiData, "speechBlend", 0.25, .9999)
-    speechFolder.add(guiData, "mouthShape", ["aa","ih","ou","ee","oh"])
+    speechFolder.add(guiData,"speechEnabled").name("speech enabled")
+    speechFolder.add(guiData, "speechFloor", 0, 0.5).name("speech threshold")
+    speechFolder.add(guiData, "speechRange", 0, 0.5).name("speech subtlety");
+    speechFolder.add(guiData, "speechBlend", 0.25, .9999).name("mouth speed")
+    speechFolder.add(guiData, "mouthShape", ["aa","ih","ou","ee","oh"]).name("VRM mouth shape")
 
     let lightingFolder = gui.addFolder("LIGHTING / CAMERA")
-    lightingFolder.add(guiData, "lightIntensity", 0, 3)
-    lightingFolder.addColor(guiData, "lightColor")
-    guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor")
+    lightingFolder.add(guiData, "lightIntensity", 0, 3).name("light intensity")
+    lightingFolder.addColor(guiData, "lightColor").name("light color")
+    guiData._ambientColorController = lightingFolder.addColor(guiData, "ambientColor").name("ambient color override")
     lightingFolder.add(guiData, "exposure",0,4)
     lightingFolder.add(guiData, "lightX", -1, 1)
     lightingFolder.add(guiData, "lightY", -1, 1)
     lightingFolder.add(guiData, "lightZ", -1, 1)
-    lightingFolder.add(guiData, "useEnvmap")
+    lightingFolder.add(guiData, "useEnvmap").name("use envmap for lighting")
     lightingFolder.add(guiData, "fov",10,120)
     lightingFolder.add(guiData,'saveCameraPosition').name('Save Camera Position & FOV')
     lightingFolder.add(guiData,'loadCameraPosition').name('(R)evert Camera Position & FOV')
     lightingFolder.add(guiData,"resetCamera").name("Reset Camera Position & FOV to DEFAULT")
 
-    gui.add(guiData,"revert")
-    gui.add(guiData,"save")
+    gui.add(guiData,"revert").name("load")
+    gui.add(guiData,"save").name("save")
     gui.add(guiData,"reset").name("Reset to DEFAULT")    
 
     localStorage.setItem('gui-defaults',JSON.stringify(gui.save()))
@@ -153,8 +153,10 @@ let getGui = function () {
     To use with an FPS, start up your game, then look around a little.
     Then, move your mouse very slowly for a moment, stop, and hit CTRL+SHIFT+M.
 
-    Drag and drop a VRM file into the application to use that instead of this one.    
+    Drag and drop a VRM file into the application to use that instead of this one.   
     You can pan and zoom by clicking and dragging. Left mouse to rotate, right mouse to pan, scroll to move in/out.
+
+    Lipsync uses the default audio device for input. Change your default input in Windows and then restart the application if you need to.
     </p>    
     `.split('\n').join('</p><p>');
     helpEl.style = "display:none;position:absolute;top:0;left:0;background:white;max-width:300px;cursor:pointer;";

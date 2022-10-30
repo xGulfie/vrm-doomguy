@@ -324,8 +324,8 @@ export default {
       light.position.set(d.lightX,d.lightY,d.lightZ).normalize();//normalize may not be necessary
       
       // mouth shape
-      let speak = window.audioFeatures?.speak || 0;
-      speak = mapRangeClamped(speak,d.speechFloor,d.speechCeiling,0,1);
+      let speak = window.audioFeatures?.smoothedSpeak || 0;
+      speak = mapRangeClamped(speak,d.speechFloor,d.speechFloor+d.speechRange,0,1);
       mouthOpenBlended = expEaseFloat(mouthOpenBlended, speak, deltaTime, Math.pow(d.speechBlend,10))
       
       // speak!

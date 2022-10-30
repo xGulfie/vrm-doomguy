@@ -20,19 +20,23 @@ export let distSq = function distSq(a, b){
 }
 
 
-function clamp(val,min,max){
+export let clamp = function(val,min,max){
     return Math.max(Math.min(val,max),min);
 }
 
 // ease stuff around
 // use this in place of things like `velocity = oldVelocity * 0.9 + newVelocity`
-// instead  do `velocity = (newVelocity - oldVelocity) * exponentialEase(clockDelta, 0.001)`
+// instead  do `smoothedVelocity = smoothedVelocity + (newVelocity - smoothedVelocity) * exponentialEase(clockDelta, 0.001)`
 function __exponentialEase(delta, r){
     var r = r || 0.0001;
     if (r == 1){r = 0.9999999999999999999999999}
     delta *= 1000;
     var clampedDelta = Math.min(delta, 1)
-    return (Math.pow(r, clampedDelta)-1) / Math.log(r)
+    let ret =  (Math.pow(r, clampedDelta)-1) / Math.log(r);
+    if (Number.isNaN(ret)){
+        return 0;
+    }
+    return ret;
 }
 
 export let expEaseFloat = function expEaseFloat(smoothedVal, newVal, delta, r){
