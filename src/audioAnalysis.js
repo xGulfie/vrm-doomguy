@@ -9,7 +9,7 @@ flatness for consonance
 
 window.audioFeatures = null;
 
-debug=false;
+let debug=false;
 
 import {clamp, expEaseFloat} from "./math2"
 
