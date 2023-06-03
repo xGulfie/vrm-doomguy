@@ -48,6 +48,8 @@ let mouseDirVectorSmooth = new THREE.Vector3(0,0,0);
 let integratedLook = new THREE.Vector3(0,0,0);
 const light = new THREE.DirectionalLight(0xffffff)
 let mouthOpenBlended = 0;
+let lookXSmooth=0;
+let lookYSmooth=0;
 
 // return 0..1 for a blink or open (0 is open)
 function blink(tSec){
@@ -134,21 +136,7 @@ export default {
         // walkPhase = walkPhase - (walkPhase % (Math.PI)) + Math.PI;
       }
       
-      // calculate move data
-      let motion = guiData.wasdMove && (this.appState.a || this.appState.s || this.appState.d || this.appState.w);
-      let run = motion && (this.appState.shift || guiData.autorun);
-      let walk = motion && !run;
-      
-      let standWalkRunUnsmooth=0
-      if (run){
-        standWalkRunUnsmooth = 2;
-      } else if (walk){
-        standWalkRunUnsmooth = 1;
-      }
-      
-      standWalkRun = expEaseFloat(standWalkRun, standWalkRunUnsmooth, deltaTime, .00000001);
-      
-      if (motion){
+      if (guiData.wasdMove){
         if (this.appState.a){
           walkBlendVector.x = -1;
         } else if (this.appState.d){
@@ -169,6 +157,11 @@ export default {
         walkBlendVector.y = 0;
       }
 
+      if (this.appState.gamepad){
+        walkBlendVector.x +=this.appState.gamepad.axes[0]
+        walkBlendVector.y +=-1*this.appState.gamepad.axes[1]
+      }
+
       if (guiData.invertX){
         walkBlendVector.x*=-1;
       }
@@ -179,9 +172,23 @@ export default {
       if (walkBlendVector.lengthSq() > 1){
         walkBlendVector.normalize();
       }
+
+      // calculate move data
+      let motion = walkBlendVector.length() > 0.15; // dead zone
+      let run = motion && (this.appState.shift && this.guiData.wasdMove || guiData.autorun || this.appState.gamepad && walkBlendVector.length() > 0.9);
+      let walk = motion && !run;
       
       expEaseVector(walkBlendVectorSmooth, walkBlendVector, deltaTime, .00001);
       expEaseVector(walkBlendVectorLessSmooth, walkBlendVector, deltaTime, 0.0001);
+
+      let standWalkRunUnsmooth=0
+      if (run){
+        standWalkRunUnsmooth = 2;
+      } else if (walk){
+        standWalkRunUnsmooth = 1;
+      }
+      
+      standWalkRun = expEaseFloat(standWalkRun, standWalkRunUnsmooth, deltaTime, .00000001);
       
       // tilt the head
       neck.rotation.y = walkBlendVectorSmooth.x * - 0.4;
@@ -277,28 +284,36 @@ export default {
         
       }
       
+      if (guiData.gamepadLook && this.appState.gamepad){
+        lookX=this.appState.gamepad.axes[2] * (guiData.gamepadLookInvertX?-1:1);
+        lookY=this.appState.gamepad.axes[3] * (guiData.gamepadLookInvertY?-1:1);
+      }
+
       // look toward the camera a bit
       lookX += walkBlendVectorLessSmooth.x*0.5;
       
       // clamp lookX/Y to maximums
       let lookLen = Math.sqrt(lookX*lookX+lookY*lookY);
       if (lookLen > 1){lookX/=lookLen;lookY/=lookLen;}
+
+      lookXSmooth=expEaseFloat(lookX, lookXSmooth, deltaTime, .0000000001)
+      lookYSmooth=expEaseFloat(lookY, lookYSmooth, deltaTime, .0000000001)
       
       // FINALLY apply the look vector to the eyes
-      if (lookX < 0){
-        vrm.expressionManager.setValue(VRMExpressionPresetName.LookLeft, Math.abs(lookX)*0.7);
+      if (lookXSmooth < 0){
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookLeft, Math.abs(lookXSmooth)*0.7);
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookRight, 0);
       } else {
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookLeft, 0);
-        vrm.expressionManager.setValue(VRMExpressionPresetName.LookRight, Math.abs(lookX)*0.7);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookRight, Math.abs(lookXSmooth)*0.7);
       }
       
-      if (lookY < 0){
-        vrm.expressionManager.setValue(VRMExpressionPresetName.LookDown, Math.abs(lookY)*0.8);
+      if (lookYSmooth < 0){
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookDown, Math.abs(lookYSmooth)*0.8);
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookUp, 0);
       } else {
         vrm.expressionManager.setValue(VRMExpressionPresetName.LookDown, 0);
-        vrm.expressionManager.setValue(VRMExpressionPresetName.LookUp, Math.abs(lookY)*0.8);
+        vrm.expressionManager.setValue(VRMExpressionPresetName.LookUp, Math.abs(lookYSmooth)*0.8);
       }
 
       // and maybe apply look vector to head and neck
@@ -307,8 +322,8 @@ export default {
         let headLookFacY = guiData.turnHeadNeckBlend * guiData.turnHeadFactorY;
         let neckLookFacX = -1*(1-guiData.turnHeadNeckBlend) * guiData.turnHeadFactorX;
         let neckLookFacY = (1-guiData.turnHeadNeckBlend) * guiData.turnHeadFactorY;
-        let turnX = Math.asin(lookX);
-        let turnY = Math.asin(lookY);        
+        let turnX = Math.asin(lookXSmooth);
+        let turnY = Math.asin(lookYSmooth);        
 
         // it's confusing but the actual bone rotation is not intuitively oriented
         head.rotation.y+= turnX*headLookFacX;

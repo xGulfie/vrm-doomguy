@@ -2,6 +2,8 @@ const { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, dialog, webCon
 const { platform } = require('os');
 const path = require('path')
 const lepikEvents = require('lepikevents').events;
+const sdl = require('@kmamal/sdl')
+
 const clArgs = require('yargs/yargs')(process.argv.slice(2)).argv
 const package_json = require("./package.json");
 
@@ -83,6 +85,14 @@ function createWindow () {
   win.on("minimize",onMotion)
   // ok so I'm just gonna setTimeout to send new position to it once on window init
   setTimeout(onMotion,1000)
+
+  let joysticks = sdl.joystick.devices;
+  if (joysticks.length > 0){
+    let joystick = sdl.joystick.openDevice(joysticks[0]);
+    joystick.on("axisMotion",(axisEvent)=>{
+      win.webContents.send("axisMotion",axisEvent);
+    })
+  }
 
 }
 

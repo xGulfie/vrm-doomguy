@@ -24,7 +24,8 @@ const guiData = getGuiData();
           windowCenter:[0,0],
           mousePosition:[0,0,0],
           fpsLookCenter:[0,0],
-          p:false
+          p:false,
+          gamepad:null
         },
         vrm:null,
         vrmUrl:require('./example.vrm'), 
@@ -122,6 +123,13 @@ const guiData = getGuiData();
         this.appState.windowCenter[0]=d[0]
         this.appState.windowCenter[1]=d[1]
       })
+      window.electronAPI.onAxisMotion(d=>{
+        if(!this.appState.gamepad){
+          this.appState.gamepad={axes:[0,0,0,0]}
+        }
+        this.appState.gamepad.axes[d.axis]=d.value
+      })
+
     },
     destroyed:function(){
       // todo, remove event listeners properly

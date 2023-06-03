@@ -7,7 +7,8 @@ const events = [
     'keyPress',
     'keyRelease',
     'mouseMove',
-    'windowMove'
+    'windowMove',
+    'axisMotion'
 ];
 events.forEach((eventName)=>{
     // 'onKeyPress' etc

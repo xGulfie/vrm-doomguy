@@ -39,6 +39,9 @@ export let guiData = {
     speechRange:0.05,
     speechBlend:0.8,
     mouthShape:"ee",
+    gamepadLook:false,
+    gamepadLookInvertY:false,
+    gamepadLookInvertX:false,
 
     revert:function(){
         gui.load(JSON.parse(localStorage.getItem("gui")))
@@ -79,6 +82,9 @@ let getGui = function () {
     let lookFolder = gui.addFolder("LOOK")
     lookFolder.add(guiData,"fpsLookSensitivity",0,10).name("fps look sensitivity")
     lookFolder.add(guiData,"turnHead").name("turn head with look")
+    lookFolder.add(guiData,"gamepadLook").name("gamepad right stick look")
+    lookFolder.add(guiData,"gamepadLookInvertX").name("gamepad look invert X")
+    lookFolder.add(guiData,"gamepadLookInvertY").name("gamepad look invert Y")
     lookFolder.add(guiData,"turnHeadNeckBlend",0,1).name("turn head vs. neck")
     lookFolder.add(guiData,"turnHeadFactorX",-1.5,1.5).name("horizontal head turn factor")
     lookFolder.add(guiData,"turnHeadFactorY",-1.5,1.5).name("vertical head turn factor")
@@ -93,8 +99,8 @@ let getGui = function () {
     animFolder.add(guiData, "jumpDuration", 0, 2)
     animFolder.add(guiData, "jumpAmplitude", 0, 0.4)
     animFolder.add(guiData, "wasdMove").name("move with WASD/arrows");
-    animFolder.add(guiData, "invertX").name("invert left/right arrows");
-    animFolder.add(guiData, "invertY").name("invert up/down arrows");
+    animFolder.add(guiData, "invertX").name("invert left/right motion");
+    animFolder.add(guiData, "invertY").name("invert up/down motion");
     animFolder.add(guiData, "spaceJump").name("jump with space");
     animFolder.add(guiData, "autorun").name("auto-run without pressing Shift");
     animFolder.add(guiData, "shoulderRotation", -0.2, 0.2)
