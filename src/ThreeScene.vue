@@ -175,7 +175,7 @@ export default {
 
       // calculate move data
       let motion = walkBlendVector.length() > 0.15; // dead zone
-      let run = motion && (this.appState.shift && this.guiData.wasdMove || guiData.autorun || this.appState.gamepad && walkBlendVector.length() > 0.9);
+      let run = motion && ( (this.appState.shift && guiData.wasdMove) || guiData.autorun || (this.appState.gamepad && walkBlendVector.length() > 0.9) );
       let walk = motion && !run;
       
       expEaseVector(walkBlendVectorSmooth, walkBlendVector, deltaTime, .00001);
@@ -191,7 +191,7 @@ export default {
       standWalkRun = expEaseFloat(standWalkRun, standWalkRunUnsmooth, deltaTime, .00000001);
       
       // tilt the head
-      neck.rotation.y = walkBlendVectorSmooth.x * - 0.4;
+      neck.rotation.y = walkBlendVectorSmooth.x * -1 * guiData.walkHeadRotation;
       neck.rotation.x = -walkBlendVectorSmooth.y * -0.1;
       head.rotation.x=0;
       head.rotation.y=0;

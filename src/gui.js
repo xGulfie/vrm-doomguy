@@ -23,8 +23,8 @@ export let guiData = {
     autorun:false,
     turnHead:false,
     turnHeadNeckBlend:0.4,
-    turnHeadFactorX:0.8,
-    turnHeadFactorY:0.8,
+    turnHeadFactorX:0.3,
+    turnHeadFactorY:0.3,
     lightColor: '#FFFFFF',
     ambientColor: '#ff0000',
     useEnvmap: true,
@@ -42,6 +42,7 @@ export let guiData = {
     gamepadLook:false,
     gamepadLookInvertY:false,
     gamepadLookInvertX:false,
+    walkHeadRotation:0.4,
 
     revert:function(){
         gui.load(JSON.parse(localStorage.getItem("gui")))
@@ -82,12 +83,12 @@ let getGui = function () {
     let lookFolder = gui.addFolder("LOOK")
     lookFolder.add(guiData,"fpsLookSensitivity",0,10).name("fps look sensitivity")
     lookFolder.add(guiData,"turnHead").name("turn head with look")
+    lookFolder.add(guiData,"turnHeadFactorX",-1.5,1.5).name("turn head with look X factor")
+    lookFolder.add(guiData,"turnHeadFactorY",-1.5,1.5).name("turn head with look Y factor")
     lookFolder.add(guiData,"gamepadLook").name("gamepad right stick look")
     lookFolder.add(guiData,"gamepadLookInvertX").name("gamepad look invert X")
     lookFolder.add(guiData,"gamepadLookInvertY").name("gamepad look invert Y")
     lookFolder.add(guiData,"turnHeadNeckBlend",0,1).name("turn head vs. neck")
-    lookFolder.add(guiData,"turnHeadFactorX",-1.5,1.5).name("horizontal head turn factor")
-    lookFolder.add(guiData,"turnHeadFactorY",-1.5,1.5).name("vertical head turn factor")
     lookFolder.add(guiData, "blinkDuration", 0, 0.4).name("blink duration")
 
     let animFolder = gui.addFolder("ANIMATION")
@@ -106,6 +107,7 @@ let getGui = function () {
     animFolder.add(guiData, "shoulderRotation", -0.2, 0.2)
     animFolder.add(guiData, "upperArmRotation", 0, 1.4)
     animFolder.add(guiData, "lowerArmRotation", 0, 0.5)
+    animFolder.add(guiData, "walkHeadRotation", 0, 0.6).name("rotate head when moving");
 
     let speechFolder = gui.addFolder("SPEECH")
     speechFolder.add(guiData,"speechEnabled").name("speech enabled")
