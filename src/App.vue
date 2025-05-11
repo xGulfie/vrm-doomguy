@@ -1,6 +1,6 @@
 <template>
 <div class="fullsize">
-  <title-bar v-if="addTitleBar" @propsmenu="onKey('p',false,false)" @hidemenu="onKey('h',true,false)"></title-bar>
+  <title-bar v-if="addTitleBar" @propsmenu="onKey('p',false,false)" @hidemenu="onKey('h',true,false)" @help="onKey('f1',true,false)"></title-bar>
   <div class="fullsize" @dragover.prevent @dragenter.prevent @drop.prevent="dragFile">
     <three-scene :vrmUrl="vrmUrl" :appState="appState" :accessories="accessories"></three-scene>
     <props-menu @accessoriesChanged="handleAccessories" v-show="appState.p"></props-menu>
@@ -63,7 +63,8 @@ const guiData = getGuiData();
           ['m','m'],
           ['p','p',true],
           ['h','h'],
-          ['r','r']
+          ['r','r'],
+          ['f1','f1']
         ]).some((map)=>{
           if (key == map[0]){
             // handle toggles
@@ -81,6 +82,8 @@ const guiData = getGuiData();
                 guiData.loadCameraPosition();
               } else if (key == 'h' && wentDown && !isGlobal){
                 guiData.toggleHide();
+              } else if (key == 'f1' && wentDown && !isGlobal){
+                guiData.toggleHelp();
               }
               return true;
             }

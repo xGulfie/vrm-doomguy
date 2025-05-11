@@ -152,6 +152,8 @@ let getGui = function () {
     }
 
     helpEl.innerHTML = `<p>
+    press F1 for help
+
     press H to show or (H)ide the main options menu
 
     press P for the (P)rops menu
@@ -165,6 +167,8 @@ let getGui = function () {
     You can pan and zoom by clicking and dragging. Left mouse to rotate, right mouse to pan, scroll to move in/out.
 
     Lipsync uses the default audio device for input. Change your default input in Windows and then restart the application if you need to.
+
+    Check the README for how to set the window background, setalways-on-top, and width and height
     </p>    
     `.split('\n').join('</p><p>');
     helpEl.style = "display:none;position:absolute;top:0;left:0;background:white;max-width:300px;cursor:pointer;";

@@ -4,6 +4,7 @@
         <span class="buttons">
             <button title="props" tabindex="-1" @click="$emit('propsmenu')">P</button>
             <button title="options" tabindex="-1" @click="$emit('hidemenu')">H</button>
+            <button title="options" tabindex="-1" @click="$emit('help')">?</button>
         </span>
         <div class="title">{{windowTitle}}</div>
         <div class="buttons">

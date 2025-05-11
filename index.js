@@ -1,6 +1,7 @@
 const { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, dialog, webContents } = require('electron');
 const { platform } = require('os');
 const path = require('path')
+const child_process = require('child_process')
 const lepikEvents = require('lepikevents').events;
 const sdl = require('@kmamal/sdl')
 
@@ -86,13 +87,25 @@ function createWindow () {
   // ok so I'm just gonna setTimeout to send new position to it once on window init
   setTimeout(onMotion,1000)
 
-  let joysticks = sdl.joystick.devices;
-  if (joysticks.length > 0){
-    let joystick = sdl.joystick.openDevice(joysticks[0]);
-    joystick.on("axisMotion",(axisEvent)=>{
-      win.webContents.send("axisMotion",axisEvent);
-    })
-  }
+
+  let joyListenerCreatedForGuid = {};
+  // check for a joystick every so often
+  let makeJoysticks = ()=>{
+    if (!sdl.joystick.devices){
+      return;
+    }
+
+    sdl.joystick.devices.forEach((descriptor)=>{
+      if (!joyListenerCreatedForGuid[descriptor.guid]){
+        sdl.joystick.openDevice(descriptor).on("axisMotion",(axisEvent)=>{
+          win.webContents.send("axisMotion",axisEvent);
+        });
+        joyListenerCreatedForGuid[descriptor.guid]=true;
+      }
+    });
+  };
+  sdl.joystick.on('deviceAdd',makeJoysticks);
+  makeJoysticks();
 
 }
 
@@ -136,9 +149,16 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   win = null;
-  if (process.platform !== 'darwin') {
+  if (process.platform == 'win32') {
     app.quit();
-    process.exit()
+    // TODO kill all winpy.exe
+    child_process.exec(`taskkill /im winpy.exe /t /F`, (err, stdout, stderr) => {
+      if (err) {
+        throw err
+        console.log(stdout,stderr)
+      }
+      process.exit()
+    });
   }
 })
 

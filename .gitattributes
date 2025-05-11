@@ -1,0 +1,17 @@
+props filter=lfs diff=lfs merge=lfs -text
+props/Avocado_draco.gltf filter=lfs diff=lfs merge=lfs -text
+props/charlie_browns_party_bowtie.glb filter=lfs diff=lfs merge=lfs -text
+props/glasses.glb filter=lfs diff=lfs merge=lfs -text
+props/Hat.glb filter=lfs diff=lfs merge=lfs -text
+props/super_mario_odyssey_hat.glb filter=lfs diff=lfs merge=lfs -text
+props/DamagedHelmet.glb filter=lfs diff=lfs merge=lfs -text
+props/Duck.glb filter=lfs diff=lfs merge=lfs -text
+props/pokemon_masters_cap.glb filter=lfs diff=lfs merge=lfs -text
+props/Baseball[[:space:]]cap.glb filter=lfs diff=lfs merge=lfs -text
+props/calimero_cap.glb filter=lfs diff=lfs merge=lfs -text
+props/master_sword_legend_of_zelda_fan_art.glb filter=lfs diff=lfs merge=lfs -text
+props/studded_punk_collar.glb filter=lfs diff=lfs merge=lfs -text
+props/super_mario_odyssey_hat(1).glb filter=lfs diff=lfs merge=lfs -text
+props/aviator_sunglasses.glb filter=lfs diff=lfs merge=lfs -text
+props/Duck.gltf filter=lfs diff=lfs merge=lfs -text
+props/hylian_shield.glb filter=lfs diff=lfs merge=lfs -text
